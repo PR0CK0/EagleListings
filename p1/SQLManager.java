@@ -47,10 +47,10 @@ public class SQLManager
 	public SQLManager() 
 	{
 		// The url for Carson Schulz's PHPMyAdmin-hosted server and DB
-		String url = "jdbc:mysql://sql9.freemysqlhosting.net:3306/sql9202636?autoReconnect=true&useSSL=false";
+		String url = "jdbc:mysql://sql9.freesqldatabase.com:3306/sql9203861?autoReconnect=true&useSSL=false";
 		// Username and password provided by Carson Schulz to access the database
-		String username = "sql9202636";
-		String password = "2duFdHsyG5";
+		String username = "sql9203861";
+		String password = "K3YHk5fQKg";
 		
 		// Such try
 		try

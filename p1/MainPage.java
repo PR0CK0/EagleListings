@@ -13,8 +13,6 @@
 
 package p1;
 import java.sql.SQLException;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -32,7 +30,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 
 public class MainPage extends Application
@@ -46,16 +43,13 @@ public class MainPage extends Application
 	/** Stage height constant. */
 	public static final int STAGE_HEIGHT = 850;
 	
-	/** Stage reference for other classes.. */
+	/** Stage reference for other classes. */
 	private Stage stage;
 	/** Instance of this class for other classes to reference. */
 	public static MainPage instance = null;
 	
 	/** Scene for the main page. */ 
 	private Scene sceneMainPage;
-	
-	// TODO test scrollpane
-	//private ScrollPane spMainPage = new ScrollPane();
 	
 	/** Overall VBox for the main page. */
 	private VBox vbMainPage = new VBox();
@@ -81,14 +75,11 @@ public class MainPage extends Application
 	/** Button for vehicles. */
 	private Button btVehicles = new Button("Vehicles");
 	
-	/** Button for furniture */
+	/** Button for furniture. */
 	private Button btFurniture = new Button("Furniture");
 	
 	/** Button for rooms. */
 	private Button btRooms = new Button("Rooms");
-	
-	/** Timeline for gameloop method. */
-	private Timeline timeline;
 	
 	/** 
 	 * Public instance of the SQLManager class.<br>
@@ -113,7 +104,47 @@ public class MainPage extends Application
 		
 		// Scene to contain all nodes
 		sceneMainPage = new Scene(vbMainPage, STAGE_WIDTH, STAGE_HEIGHT);
-				
+	
+		// Method to set up the grid panes
+		setUpGridPanes();
+		
+		// Make buttons pretty
+		nav.setButtonStyleRound(btBooks);
+		nav.setButtonStyleRound(btVehicles);
+		nav.setButtonStyleRound(btFurniture);
+		nav.setButtonStyleRound(btRooms);
+		
+		// Add all children to the main VBox and set up its looks
+		vbMainPage.getChildren().addAll(nav.getNavBar(), gpBooks, btBooks, gpVehicles, btVehicles, gpFurniture, btFurniture, gpRooms, btRooms);
+		vbMainPage.setBackground(new Background(new BackgroundFill[]{new BackgroundFill(Color.DARKGREY, null, null)}, 
+				new BackgroundImage[]{new BackgroundImage(new Image("p1/img/EmbryRiddleEagles.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, null)}));
+		vbMainPage.setAlignment(Pos.TOP_CENTER);
+		vbMainPage.setSpacing(5);
+		
+		// Display everything in the stage, editing its properties
+		stagePrimary.setResizable(true);
+		stagePrimary.setMinWidth(STAGE_WIDTH);
+		stagePrimary.setMinHeight(STAGE_HEIGHT);
+		stagePrimary.setTitle("EagleListings - Buying and Selling for Eagles");
+		stagePrimary.setScene(sceneMainPage);
+		stagePrimary.show();
+		
+		// Button functionality
+		btBooks.setOnAction(e -> booksButtonClick());
+		btVehicles.setOnAction(e -> vehiclesButtonClick());
+		btFurniture.setOnAction(e -> furnitureButtonClick());
+		btRooms.setOnAction(e -> roomsButtonClick());
+		
+		// Apply a listener to the navbar buttons
+		nav.navListener(true);
+	}
+	
+	
+	/**
+	 * Sets up the main page's gridpane with the most recent items of each category.
+	 */
+	private void setUpGridPanes()
+	{	
 		// Set up the gridpanes
 		// TODO
 		// This is where the most recent item images would be displayed
@@ -160,61 +191,13 @@ public class MainPage extends Application
 		gpRooms.setMinWidth(500);
 		gpRooms.setAlignment(Pos.CENTER);
 		gpRooms.setGridLinesVisible(true);
-		
-		// Make buttons pretty
-		nav.setButtonStyle(btBooks);
-		nav.setButtonStyle(btVehicles);
-		nav.setButtonStyle(btFurniture);
-		nav.setButtonStyle(btRooms);
-		
-		// Set up the all-encompassing VBox on the Main page and add all nodes inside it, top to bottom
-		vbMainPage.setSpacing(5);
-		vbMainPage.setAlignment(Pos.TOP_CENTER);
-		vbMainPage.setBackground(new Background(new BackgroundFill[]{new BackgroundFill(Color.DARKGREY, null, null)}, 
-				new BackgroundImage[]{new BackgroundImage(new Image("p1/img/EmbryRiddleEagles.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, null)}));
-		vbMainPage.getChildren().addAll(nav.getNavBar(), gpBooks, btBooks, gpVehicles, btVehicles, gpFurniture, btFurniture, gpRooms, btRooms);
-		
-		// Display everything in the stage, editing its properties
-		stagePrimary.setResizable(true);
-		stagePrimary.setMinWidth(STAGE_WIDTH);
-		stagePrimary.setMinHeight(STAGE_HEIGHT);
-		stagePrimary.setTitle("EagleListings - Buying and Selling for Eagles");
-		stagePrimary.setScene(sceneMainPage);
-		stagePrimary.show();
-		
-		// Button functionality
-		btBooks.setOnAction(e -> booksButtonClick());
-		btVehicles.setOnAction(e -> vehiclesButtonClick());
-		btFurniture.setOnAction(e -> furnitureButtonClick());
-		btRooms.setOnAction(e -> roomsButtonClick());
-		
-		// Start gameloop to update the navbar
-		gameLoop();
 	}
-
-	
-	/**
-	 * Simple JavaFX timeline to update the navbar
-	 */
-	private void gameLoop()
-	{
-		timeline = new Timeline();
-		// Set the game's timeline to be indefinite
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		// Repeat the timeline cycle every 16ms, which equates to 1000ms / 16ms =~ 60fps
-		// Every time it's enabled, update the navbar
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(16), e -> nav.setDisables(true, sqlm.getUser().isLoggedIn(), true)));
-		timeline.play();
-	}
-	
 	
 	/**
 	 * Functionality for Books button click
 	 */
 	private void booksButtonClick()
 	{
-		timeline.stop();
-		
 		ItemPage obj = new ItemPage("Books");
 		stage.getScene().setRoot(obj.getRootPane());
 	}
@@ -225,8 +208,6 @@ public class MainPage extends Application
 	 */
 	private void vehiclesButtonClick()
 	{
-		timeline.stop();
-		
 		ItemPage obj = new ItemPage("Vehicles");
 		stage.getScene().setRoot(obj.getRootPane());
 	}
@@ -237,8 +218,6 @@ public class MainPage extends Application
 	 */
 	private void furnitureButtonClick()
 	{
-		timeline.stop();
-		
 		ItemPage obj = new ItemPage("Furniture");
 		stage.getScene().setRoot(obj.getRootPane());
 	}
@@ -277,6 +256,17 @@ public class MainPage extends Application
 	
 	
 	/**
+	 * Getter
+	 * 
+	 * @return nav
+	 */
+	public NavBar getNavBar()
+	{
+		return nav;
+	}
+	
+	
+	/**
 	 * Needed to run JavaFX without command line
 	 * 
 	 * @param args
@@ -286,8 +276,6 @@ public class MainPage extends Application
 		// Launch the start method
 	    MainPage.launch(args);
 	    // Or just launch(args);
-	    
-	    sqlm.getUser().test();
 	    
 	    // Close the SQL database connection if the application is closing
 	    if(Platform.isImplicitExit())
@@ -307,5 +295,6 @@ public class MainPage extends Application
 				System.err.println("Could not close connection to database!");
 			}
 	    }
+	    
 	}
 }

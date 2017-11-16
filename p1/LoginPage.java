@@ -10,13 +10,13 @@
 
 package p1;
 import java.io.File;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -29,7 +29,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 
 public class LoginPage 
@@ -37,6 +36,15 @@ public class LoginPage
 	/* ---------------------- */
 	/* ----- ATTRIBUTES ----- */
 	/* ---------------------- */
+	
+	/** Characters allowed in the email. */
+	private static final int EMAIL_CHARS_ALLOWED = 100;
+	
+	/** Characters allowed in the username. */
+	private static final int NAME_CHARS_ALLOWED = 100;
+	
+	/** Characters allowed in the password. */
+	private static final int PASSWORD_CHARS_ALLOWED = 150;
 	
 	/** Container VBox for login page */
 	private VBox vbLogin = new VBox(50);
@@ -57,7 +65,7 @@ public class LoginPage
 	private TextField tfEmail = new TextField();
 	
 	/** Textfield to take in user password. */
-	private TextField tfPassword = new TextField();
+	private PasswordField pfPassword = new PasswordField();
 
 	/** Button to log the user in. */
 	private Button btLogin = new Button("Login");
@@ -71,9 +79,6 @@ public class LoginPage
 	/** Wrapper for login sound (JavaFX necessary). */
 	private MediaPlayer mpLogin = new MediaPlayer(soundLogin);
 	
-	/** Timeline for gameloop method */
-	private Timeline timeline;
-	
 	/**
 	 * Needed to edit the user's selected image URI (otherwise cannot edit its value
      * outside of the .setOnAction block in the new user method).<br>
@@ -86,7 +91,7 @@ public class LoginPage
 	/* -------------------------------- */
 	
 	/**
-	 * Default constructor for Login page
+	 * Default constructor for Login page.
 	 */
 	public LoginPage()
 	{
@@ -96,44 +101,48 @@ public class LoginPage
 		// Set the bad entry label's properties (min width is necessary as it only shows if bad input is given,
 		// updating the existing GUI in such a way as to cause it to move unattractively)
 		lblBadEntry.setMinWidth(220);
-		// Color for text in CSS Java is not -fx-font-color, it is -fx-text-fill, with traditional Java Paint values working
 		lblBadEntry.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em; -fx-font-weight: bold; -fx-text-fill: RED");
 		
-		// Set all textfield's properties, as well as the Login and New User buttons'
+		// Set all textfields' properties
 		tfEmail.setPromptText("Enter email...");
+		pfPassword.setPromptText("Enter password...");
 		nav.setTextFieldStyle(tfEmail);
-		tfPassword.setPromptText("Enter password...");
-		nav.setTextFieldStyle(tfPassword);		
-		//checkPasswordVis.setText("Hide password");
-		btLogin.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.15em; -fx-background-insets: 0,0,0,0");
-		btLogin.setEffect(nav.dropShadowButton);
-		nav.setButtonStyle(btNewUser);
+		nav.setTextFieldStyle(pfPassword);		
+		
+		// Set buttons' styles
+		nav.setButtonStyleSharp(btLogin);
+		nav.setButtonStyleRound(btNewUser);
 	
 		// Add all nodes to the gridpane
 		gpUserPass.add(lblBadEntry, 0, 0);
 		gpUserPass.add(tfEmail, 0, 1);
-		gpUserPass.add(tfPassword, 0, 2);
+		gpUserPass.add(pfPassword, 0, 2);
 		gpUserPass.add(btLogin, 1, 2);
 		gpUserPass.add(btNewUser, 0, 3);
 		gpUserPass.setVgap(20);
 		gpUserPass.setMaxWidth(300);
 		gpUserPass.setAlignment(Pos.CENTER);
-		
 		// Necessary to get the new user button to center
 		GridPane.setColumnSpan(btNewUser, 2);
 		GridPane.setHalignment(btNewUser, HPos.CENTER);
 		
 		// Set VBox for use
-		vbLogin.setAlignment(Pos.TOP_CENTER);
-		vbLogin.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
 		vbLogin.getChildren().addAll(nav.getNavBar(), lblLogin, gpUserPass);
+		vbLogin.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
+		vbLogin.setAlignment(Pos.TOP_CENTER);
+		
+		// Validate input text and limit length
+		SQLManager.tfTextValidator(tfEmail, false);
+		SQLManager.tfTextValidator(pfPassword, false);
+		SQLManager.tfLengthLimiter(tfEmail, EMAIL_CHARS_ALLOWED);
+		SQLManager.tfLengthLimiter(pfPassword, PASSWORD_CHARS_ALLOWED);
 		
 		// Button functionality
 		btLogin.setOnAction(e -> loginButtonClick());
 		btNewUser.setOnAction(e -> newUserButtonClick());
 		
-		// Start gameloop to update the navbar
-		gameLoop();
+		// Apply a listener to the navbar buttons
+		nav.navListener(false);
 	}
 	
 	
@@ -143,7 +152,7 @@ public class LoginPage
 	private void loginButtonClick()
 	{
 		// Attempt login (refer to the login method in the User class)
-		MainPage.sqlm.getUser().login(tfEmail.getText(), tfPassword.getText());
+		MainPage.sqlm.getUser().login(tfEmail.getText(), pfPassword.getText());
 		
 		// If the user is not logged in after the login attempt, then the email and password must not exist (or do not match)
 		if (!MainPage.sqlm.getUser().isLoggedIn())
@@ -154,7 +163,7 @@ public class LoginPage
 		// Otherwise, we are logged in, so play the login sound and return to the main page
 		else
 		{
-			mpLogin.setVolume(.3);
+			mpLogin.setVolume(.025);
 			mpLogin.play();
 			MainPage.instance.getStage().getScene().setRoot(MainPage.instance.getMainVBox());
 		}
@@ -180,8 +189,8 @@ public class LoginPage
 		stageNewUser.initModality(Modality.APPLICATION_MODAL);
 		
 		// Title label
-		Label lblInfo = new Label("Create account");
-		lblInfo.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold");
+		Label lblTitle = new Label("Create account");
+		lblTitle.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold");
 		
 		// Bad entry label
 		Label lblWarning = new Label();
@@ -207,18 +216,28 @@ public class LoginPage
 		tfPassword2.setPromptText("Re-enter your password...");
 		nav.setTextFieldStyle(tfPassword1);
 		nav.setTextFieldStyle(tfPassword2);
-		
+
 		// Button for choosing a profile image
 		Button btChooseImg = new Button("Choose profile image");
-		nav.setButtonStyle(btChooseImg);
+		nav.setButtonStyleRound(btChooseImg);
 
 		// Final button
 		Button btOk = new Button("OK");
-		nav.setButtonStyle(btOk);
+		nav.setButtonStyleRound(btOk);
 		
 		// Set VBox for use, set scene
-		vbNewUser.getChildren().addAll(lblInfo, lblWarning, tfName, tfEmail, tfPassword1, tfPassword2, btChooseImg, btOk);
+		vbNewUser.getChildren().addAll(lblTitle, lblWarning, tfName, tfEmail, tfPassword1, tfPassword2, btChooseImg, btOk);
 		stageNewUser.setScene(sceneNewUser);
+		
+		// Text validation and limiting
+		SQLManager.tfTextValidator(tfName, false);
+		SQLManager.tfTextValidator(tfEmail, false);
+		SQLManager.tfTextValidator(tfPassword1, false);
+		SQLManager.tfTextValidator(tfPassword2, false);
+		SQLManager.tfLengthLimiter(tfName, NAME_CHARS_ALLOWED);
+		SQLManager.tfLengthLimiter(tfEmail, EMAIL_CHARS_ALLOWED);
+		SQLManager.tfLengthLimiter(tfPassword1, PASSWORD_CHARS_ALLOWED);
+		SQLManager.tfLengthLimiter(tfPassword2, PASSWORD_CHARS_ALLOWED);
 		
 		//TODO
 		// Sending it to Carson's server
@@ -296,21 +315,6 @@ public class LoginPage
 		}
 	}
 	
-	
-	/**
-	 * Simple JavaFX timeline to update the navbar.
-	 */
-	private void gameLoop()
-	{
-		timeline = new Timeline();
-		// Set the game's timeline to be indefinite
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		// Repeat the timeline cycle every 16ms, which equates to 1000ms / 16ms =~ 60fps
-		// Every time it's enabled, update the navbar
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(16), e -> nav.setDisables(false, MainPage.sqlm.getUser().isLoggedIn(), false)));
-		timeline.play(); 
-	}
-
 	
 	/**
 	 * Getter

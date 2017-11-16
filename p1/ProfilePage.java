@@ -10,17 +10,22 @@
 
 
 package p1;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import java.sql.SQLException;
+import java.util.Objects;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 
 public class ProfilePage
@@ -28,18 +33,6 @@ public class ProfilePage
 	/* ---------------------- */
 	/* ----- ATTRIBUTES ----- */
 	/* ---------------------- */
-	
-	//TODO
-	/* Testing new profile layout
-	private GridPane gpProfile = new GridPane();
-	private Button btGeneral = new Button("General");
-	private Button btSettings = new Button("Settings");
-	private Button btHelp = new Button("Help");
-	private VBox vbInfo = new VBox();
-	private Label lblItemsSold = new Label("Items sold:");
-	private Label lblGoodRatings = new Label("Items sold:");
-	private Label lblBadRatings = new Label("Items sold:");
-	*/
 	
 	/** Container VBox for profile page */	
 	private VBox vbProfile = new VBox(50);
@@ -58,9 +51,16 @@ public class ProfilePage
 	
 	/** Wrapper for user's avatar image. */
 	private ImageView imgProfile = new ImageView();
+	
+	/** Hbox containing change buttons. */
+	private HBox hbChange = new HBox(15);
+	
+	/** Button to change email. */
+	private Button btChangeEmail = new Button("Change email");
+	
+	/** Button to change password. */
+	private Button btChangePassword = new Button("Change password");
 
-	/** Timeline for gameloop method. */
-	private Timeline timeline;
 	
 	/* -------------------------------- */
 	/* ----- METHODS/CONSTRUCTORS ----- */
@@ -75,13 +75,9 @@ public class ProfilePage
 		lblUsername.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold");
 		lblUsername.setText("Welcome, " + MainPage.sqlm.getUser().getName() + ".");
 		
-		// Will update 
-		/*
-		lblInfo.setText("Email:" + MainPage.sqlm.getUser().getLoggedInEmail() + " \nPassword: " + MainPage.sqlm.getUser().getLoggedInPassword()
-		                + "\nGood ratings:" + MainPage.sqlm.getUser().getRatingGood() + "\nBad ratings:" + MainPage.sqlm.getUser().getRatingBad()
-		                + "\nItems sold: " + MainPage.sqlm.getUser().getItemsSold() + "\nRegistration date: " + MainPage.sqlm.getUser().getRegDate()); 
-		*/
-		lblInfo.setText("placeholder");
+		// Display basic user info
+		lblInfo.setText("Email: " + MainPage.sqlm.getUser().getLoggedInEmail() + " \nPassword: " + MainPage.sqlm.getUser().getLoggedInPassword()
+				+ "\nItems sold: " + MainPage.sqlm.getUser().getItemsSold()); 
 		lblInfo.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em; -fx-font-weight: bold");
 		
 		//TODO
@@ -93,55 +89,184 @@ public class ProfilePage
 		img = new Image(imgURI, 350, 350, true, true);
 		imgProfile.setImage(img);
 		
+		// Set button's style
+		nav.setButtonStyleSharp(btChangeEmail);
+		nav.setButtonStyleSharp(btChangePassword);
+		
+		// Add change buttons to Hbox
+		hbChange.getChildren().addAll(btChangeEmail, btChangePassword);
+		hbChange.setAlignment(Pos.CENTER);
+		
 		// Set VBox for use
 		vbProfile.setAlignment(Pos.TOP_CENTER);
+		vbProfile.setMinSize(500, 500);
 		vbProfile.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
 		vbProfile.setMinSize(MainPage.STAGE_WIDTH, MainPage.STAGE_HEIGHT);
-		vbProfile.getChildren().addAll(nav.getNavBar(), lblUsername, lblInfo, imgProfile);
+		vbProfile.getChildren().addAll(nav.getNavBar(), lblUsername, lblInfo, imgProfile, hbChange);
 		
+		// Button functionality
+		btChangeEmail.setOnAction(e -> changeEmailButtonClick());
+		btChangePassword.setOnAction(e -> changePasswordButtonClick());
 		
-		//TODO
-		// Testing new profile layout
-		/*
-		vbProfile.getChildren().addAll(nav.getNavBar(), gpProfile);
-		btGeneral.setBackground(null);
-		btSettings.setBackground(null);
-		btHelp.setBackground(null);
-		btGeneral.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
-		btSettings.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
-		btHelp.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
-
-		gpProfile.add(btGeneral, 0, 0);
-		gpProfile.add(btSettings, 0, 1);
-		gpProfile.add(btHelp, 0, 2);
-		vbInfo.getChildren().addAll(lblItemsSold, lblGoodRatings, lblBadRatings);
-		vbInfo.setMinSize(400, 600);
-		GridPane.setRowSpan(vbInfo, 3);
-		gpProfile.add(vbInfo, 1, 0);
-		gpProfile.add(imgProfile, 2, 1);
-		GridPane.setRowSpan(imgProfile, 3);
-		gpProfile.setAlignment(Pos.CENTER);
-		gpProfile.setGridLinesVisible(true);
-		*/
-		
-		
-		// Start gameloop to update the navbar
-		gameLoop();
+		MainPage.sqlm.getUser().getIsLoggedInProperty().addListener((observable) ->
+		{
+			nav.setDisables(MainPage.sqlm.getUser().isLoggedIn(), false);
+		});
+		MainPage.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.sqlm.getUser().isLoggedIn());
+		MainPage.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.sqlm.getUser().isLoggedIn());
 	}
-
+	
 	
 	/**
-	 * Simple JavaFX timeline to update the navbar.
+	 * Provides functionality for changing user email.
 	 */
-	private void gameLoop()
+	private void changeEmailButtonClick()
 	{
-		timeline = new Timeline();
-		// Set the game's timeline to be indefinite
-		timeline.setCycleCount(Timeline.INDEFINITE);
-		// Repeat the timeline cycle every 16ms, which equates to 1000ms / 16ms =~ 60fps
-		// Every time it's enabled, update the navbar
-		timeline.getKeyFrames().add(new KeyFrame(Duration.millis(16), e -> nav.setDisables(false, MainPage.sqlm.getUser().isLoggedIn(), false)));
-		timeline.play(); 
+		newChangeStage("Change your email!", "email", 300, 400);
+	}
+	
+	
+	/**
+	 * Provides functionality for changing user password.
+	 */
+	private void changePasswordButtonClick()
+	{
+		newChangeStage("Change your password!", "password", 300, 400);
+	}
+	
+	
+	// TODO reuse this in Login page for new user?
+	/**
+	 * Helper function - creates a new stage.
+	 * In this implementation, allows the user to change either their password or email.
+	 * 
+	 * @param title
+	 */
+	private void newChangeStage(String title, String field, int width, int height)
+	{
+		// Define and set up all necessary containers
+		VBox vb = new VBox(15);
+		vb.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
+		vb.setAlignment(Pos.CENTER);
+		Scene scene = new Scene(vb, width, height);
+		Stage stage = new Stage();
+		stage.setTitle(title);
+		stage.setResizable(false);
+		// This line is very important, as it does not allow the user to click on ANYTHING else except the new stage
+		// (in the application)... other desktop windows can be accessed
+		stage.initModality(Modality.APPLICATION_MODAL);
+		
+		// Title label
+		Label lblTitle = new Label("Change " + field);
+		lblTitle.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold");
+		
+		// Bad entry label
+		Label lblWarning = new Label();
+		lblWarning.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em; -fx-font-weight: bold; -fx-text-fill: RED");
+		
+		// Text fields for changing a field
+		TextField tf1 = new TextField();
+		TextField tf2 = new TextField();
+		tf1.setPromptText("Enter your current " + field + "...");
+		tf2.setPromptText("Enter your new " + field + "...");
+		tf1.setMaxWidth(280);
+		tf2.setMaxWidth(280);
+		nav.setTextFieldStyle(tf1);
+		nav.setTextFieldStyle(tf2);
+		
+		// Ok button to close stage 
+		Button btOk = new Button("Ok");
+		nav.setButtonStyleRound(btOk);
+		
+		// Set up Vbox and set the scene
+		vb.getChildren().addAll(lblTitle, lblWarning, tf1, tf2, btOk);
+		stage.setScene(scene);
+		
+		// Okay button functionality
+		// The if statements are redundant but it doesn't work right any other way
+		btOk.setOnAction(e -> 
+		{
+			// If the passed in field is email, check for changing email
+			if (Objects.equals(field, "email"))
+			{
+				if (tf1.getText().isEmpty() || tf2.getText().isEmpty())
+				{
+					lblWarning.setText("One or more of the fields is empty!");
+				}
+				
+				else if (!Objects.equals(tf1.getText(), MainPage.sqlm.getUser().getLoggedInEmail()))
+				{
+					lblWarning.setText("Current email does not match!");
+				}
+				// All good? Change email
+				else
+				{
+					// Such try
+					try 
+					{
+						MainPage.sqlm.getStatement().executeUpdate(
+								"UPDATE users SET email = ('"+tf2.getText()+"') WHERE id = ("+MainPage.sqlm.getUser().getLoggedInID()+")");
+					} 
+					
+					// Very catch
+					catch (SQLException e1) 
+					{
+						System.err.println("Could not update email!");
+						e1.printStackTrace();
+					}
+					
+					stage.close();
+				}
+			}
+			
+			// If the passed in field is password, check for changing password
+			if (Objects.equals(field, "password"))
+			{
+				if (tf1.getText().isEmpty() || tf2.getText().isEmpty())
+				{
+					lblWarning.setText("One or more of the fields is empty!");
+				}
+				
+				else if (!Objects.equals(tf1.getText(), MainPage.sqlm.getUser().getLoggedInEmail()))
+				{
+					lblWarning.setText("Current email does not match!");
+				}
+				
+				// All good? Change password
+				else
+				{
+					// Such try
+					try 
+					{
+						MainPage.sqlm.getStatement().executeUpdate(
+							"UPDATE users SET password = ('"+tf2.getText()+"') WHERE id = ("+MainPage.sqlm.getUser().getLoggedInID()+")");
+					} 
+					
+					// Very catch
+					catch (SQLException e1) 
+					{
+						System.err.println("Could not update password!");
+						e1.printStackTrace();
+					}
+					
+					stage.close();
+				}
+			}
+		});
+		
+		// Such try
+		try
+		{
+			// Show the stage and wait for some user response (OK button closes it, see above)
+			stage.showAndWait();
+		}
+		
+		// Very catch
+		catch (IllegalStateException e)
+		{
+			e.printStackTrace();
+			System.err.println("Could not display UI to change your " + field + "!");
+		}
 	}
 	
 	

@@ -8,7 +8,6 @@
  * The top row contains buttons for returning home, selecting a buying category,
  * selling, logging in, logging out and help.<br>
  * The bottom row contains a search bar and button to search for items.<br>
- * When the user is in a specific page: corresponding button disabled.<br>
  * When the user is not logged in: Logout button disabled, Profile button disabled, 
  * Selling button disabled.<br>
  * When the user is logged in: Login button disabled.
@@ -82,7 +81,7 @@ public class NavBar
 	/** Search button. */
 	private Button btSearch = new Button("Search");
 	
-	/** Dropshadow effect for use in the entire application */
+	/** Dropshadow effect for use in the entire application. */
 	protected DropShadow dropShadowButton = new DropShadow(5.5, 3.0, 3.0, Color.DARKSLATEGREY);
 	
 	
@@ -90,14 +89,12 @@ public class NavBar
 	/* ----- METHODS/CONSTRUCTORS ----- */
 	/* -------------------------------- */
 	
-	// TODO
-	// Consolidate GameLoop method here
-	
 	/**
 	 * Default constructor for NavBar.
 	 */
 	public NavBar()
 	{	
+		// Set looks of the title in the NavBar
 		lblTitle.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold; -fx-font-style: italic; -fx-text-fill: WHITE");
 		
 		// Apply CSS and other effects to NavBar elements
@@ -112,186 +109,63 @@ public class NavBar
 		tfSearchBar.setPromptText("What are you looking for...");
 		tfSearchBar.setEffect(dropShadowButton);
 		
+		// Hbox containing all buttons
 		hbNav.setAlignment(Pos.CENTER);
 		hbNav.getChildren().addAll(btHome, cbBuying, btSelling, btLogin, btProfile, help.getHelpButton(), btLogout);
 		
+		// Hbox containing search nodes
 		hbSearch.setAlignment(Pos.CENTER);
 		hbSearch.getChildren().addAll(tfSearchBar, btSearch);
 				
 		// Set up the VBox to be displayed
+		vbNav.getChildren().addAll(lblTitle, hbNav, hbSearch);
+		vbNav.setAlignment(Pos.CENTER);
 		VBox.setMargin(vbNav, new Insets(0, 0, 15, 0));
 		vbNav.setPadding(new Insets(5, 0, 15, 0));
 		vbNav.setBackground(new Background(new BackgroundFill(Color.DARKSLATEBLUE, null, null)));
-		vbNav.getChildren().addAll(lblTitle, hbNav, hbSearch);
-		vbNav.setAlignment(Pos.CENTER);
 		
-		// Return home functionality!
-		btHome.setOnAction(e -> 
-		{
-			MainPage.instance.getStage().getScene().setRoot(MainPage.instance.getMainVBox());
-			
-			// FIXME
-			// When going to home page, the prompt text in the combo box does not say "Buying"
-			cbBuying.setValue("Buying");
-			cbBuying.setPromptText("Buying");
-		});
-			
-
-		// Functionality for combobox drop down items
-		// Incredibly ugly, but it works as intended
-		cbBuying.setOnAction(e -> 
-		{
-			String value = cbBuying.getValue();
-			
-			if(Objects.equals(value, "Books"))
-			{
-				ItemPage obj = new ItemPage("Books");
-				MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
-			}
-			if(Objects.equals(value, "Vehicles"))
-			{
-				ItemPage obj = new ItemPage("Vehicles");
-				MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
-			}
-			if(Objects.equals(value, "Furniture"))
-			{
-				ItemPage obj = new ItemPage("Furniture");
-				MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
-			}
-			if(Objects.equals(value, "Rooms"))
-			{
-				ItemPage obj = new ItemPage("Rooms");
-				MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
-			}
-		});
-		
-		
-		// Login and profile page functionality
+		// Node functionality
+		btHome.setOnAction(e -> homeButtonClick());
+		cbBuying.setOnAction(e -> buyingBoxClick());
 		btLogin.setOnAction(e -> loginButtonClick());
 		btProfile.setOnAction(e-> profileButtonClick());
 		btLogout.setOnAction(e -> logoutButtonClick());
-		// Selling button functionality
 		btSelling.setOnAction(e -> sellingButtonClick());
-		btSearch.setOnAction(e -> {
-			MainPage.sqlm.getUser().search(tfSearchBar.getText());
-		});
+		btSearch.setOnAction(e -> searchButtonClick());
 		
-		searchTextValidator();
+		SQLManager.tfTextValidator(tfSearchBar, false);
 	}
 	
 	
 	// TODO
-	// Put this in another class, shorten it perhaps?
-	// Validate ANY textfield input
-	
+	// Does not work if searchable is true
 	/**
-	 * Good luck SQL injecting me now, biatch.
+	 * Applies a listener to the user's logged in property. 
+	 * Calls setDisables in the NavBar class, which updates any
+	 * NavBar instance's buttons depending on if the user is
+	 * logged in or not. 
+	 * 
+	 * @param isSearchable
 	 */
-	private void searchTextValidator()
-	{		
-		tfSearchBar.textProperty().addListener((var, oldText, newText) ->
+	protected void navListener(boolean isSearchable)
+	{
+		MainPage.sqlm.getUser().getIsLoggedInProperty().addListener((observable) ->
 		{
-			if(newText.length() > 0)
-			{
-				// Whats the last character of the new text (basically what we added)
-				// newText.length() - 1 is grabbing the index of the last character (count starts from 0,
-				// but length starts at 1, so subtract 1)
-				switch(newText.charAt(newText.length() - 1))
-				{
-				// Don't do anything for the accepted alphabet
-				case 'a':
-				case 'b':
-				case 'c':
-				case 'd':
-				case 'e':
-				case 'f':
-				case 'g':
-				case 'h':
-				case 'i':
-				case 'j':
-				case 'k':
-				case 'l':
-				case 'm':
-				case 'n':
-				case 'o':
-				case 'p':
-				case 'q':
-				case 'r':
-				case 's':
-				case 't':
-				case 'u':
-				case 'v':
-				case 'w':
-				case 'x':
-				case 'y':
-				case 'z':
-				case 'A':
-				case 'B':
-				case 'C':
-				case 'D':
-				case 'E':
-				case 'F':
-				case 'G':
-				case 'H':
-				case 'I':
-				case 'J':
-				case 'K':
-				case 'L':
-				case 'M':
-				case 'N':
-				case 'O':
-				case 'P':
-				case 'Q':
-				case 'R':
-				case 'S':
-				case 'T':
-				case 'U':
-				case 'V':
-				case 'W':
-				case 'X':
-				case 'Y':
-				case 'Z':
-				case '0':
-				case '1':
-				case '2':
-				case '3':
-				case '4':
-				case '5':
-				case '6':
-				case '7':
-				case '8':
-				case '9':
-					break;
-				default:
-					// Otherwise reset the text field to the old text
-					tfSearchBar.setText(oldText);
-				}
-			}
-		});
+			setDisables(MainPage.sqlm.getUser().isLoggedIn(), isSearchable);
+		});	
+		MainPage.sqlm.getUser().setLoggedIn(true);
+		MainPage.sqlm.getUser().setLoggedIn(false);
 	}
 	
 	
 	/**
-	 * Method used to dynamically set the disabled values of each button in the NavBar.<br>
-	 * Called in the GameLoop methods of each Page class.
+	 * Method used to dynamically set the disabled values of each button in the NavBar.
 	 * 
-	 * @param isHome
 	 * @param isLoggedIn
 	 * @param isSearchable
 	 */
-	protected void setDisables(boolean isHome, boolean isLoggedIn, boolean isSearchable)
+	protected void setDisables(boolean isLoggedIn, boolean isSearchable)
 	{
-		// Are we home? Disable home button
-		if (isHome)
-		{
-			btHome.setDisable(true);
-		}
-		
-		else
-		{
-			btHome.setDisable(false);
-		}
-		
 		// Are we logged in?
 		if (!isLoggedIn)
 		{
@@ -325,17 +199,50 @@ public class NavBar
 	
 	
 	/**
-	 * Functionality for selling button click.
+	 * Functionality for home button click.
 	 */
-	private void sellingButtonClick()
+	private void homeButtonClick()
 	{
-		SellingPage obj = new SellingPage();
-		MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+		MainPage.instance.getStage().getScene().setRoot(MainPage.instance.getMainVBox());
 	}
 	
 	
 	/**
-	 * Functioanlity for login button click.
+	 * Functionality for buying drop-down box click.
+	 */
+	private void buyingBoxClick()
+	{
+		// Store the value of the drop-down box's selected value
+		String value = cbBuying.getValue();
+		
+		// Navigate to specific item page based on four if selections
+		if(Objects.equals(value, "Books"))
+		{
+			ItemPage obj = new ItemPage("Books");
+			MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+		}
+		
+		if(Objects.equals(value, "Vehicles"))
+		{
+			ItemPage obj = new ItemPage("Vehicles");
+			MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+		}
+		
+		if(Objects.equals(value, "Furniture"))
+		{
+			ItemPage obj = new ItemPage("Furniture");
+			MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+		}
+		
+		if(Objects.equals(value, "Rooms"))
+		{
+			ItemPage obj = new ItemPage("Rooms");
+			MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+		}
+	}
+	
+	/**
+	 * Functionality for login button click.
 	 */
 	private void loginButtonClick()
 	{
@@ -385,6 +292,28 @@ public class NavBar
 	
 	
 	/**
+	 * Functionality for selling button click.
+	 */
+	private void sellingButtonClick()
+	{
+		SellingPage obj = new SellingPage();
+		MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+	}
+	
+	
+	/**
+	 * Functionality for search button click.
+	 */
+	private void searchButtonClick()
+	{
+		// Spit out some searches
+		ItemPage searchPage = new ItemPage("Search results");
+		MainPage.instance.getStage().getScene().setRoot(searchPage.getRootPane());
+		searchPage.spContent.setText(MainPage.sqlm.getUser().search(tfSearchBar.getText()));
+	}
+	
+	
+	/**
 	 * Helper function - applies CSS styling, JavaFX effects and other things to NavBar elements.
 	 */
 	private void setNavStyle()
@@ -420,6 +349,7 @@ public class NavBar
 		btSelling.setTooltip(new Tooltip("List your item here!"));
 		btLogin.setTooltip(new Tooltip("Login to your EagleListings account."));
 		btProfile.setTooltip(new Tooltip("Check and edit your personal profile."));
+		help.getHelpButton().setTooltip(new Tooltip("Get some help."));
 		btLogout.setTooltip(new Tooltip("Logout of your EagleListings account."));
 		tfSearchBar.setTooltip(new Tooltip("Enter your search term here."));
 		btSearch.setTooltip(new Tooltip("Search for an item."));
@@ -433,9 +363,23 @@ public class NavBar
 	 * 
 	 * @param bt
 	 */
-	protected void setButtonStyle(Button bt)
+	protected void setButtonStyleRound(Button bt)
 	{
 		bt.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.15em; -fx-background-radius: 10,10,10,10; -fx-background-insets: 10,1,2,10");
+		bt.setEffect(dropShadowButton);
+	}
+	
+	
+	/**
+	 * Helper function - takes in a button and sets its CSS style.
+	 * Makes the button sharp-cornered.<br>
+	 * Used by other classes that contain a NavBar instance.
+	 * 
+	 * @param bt
+	 */
+	protected void setButtonStyleSharp(Button bt)
+	{
+		bt.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.15em; -fx-background-insets: 0,0,0,0");
 		bt.setEffect(dropShadowButton);
 	}
 	
@@ -461,7 +405,7 @@ public class NavBar
 	 * 
 	 * @param cb
 	 */
-	protected void setComboBoxStyle(ComboBox<String> cb)
+	protected void setComboBoxStyle(ComboBox<?> cb)
 	{
 		cb.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em;  -fx-background-radius: 0,0,0,0");
 		cb.setEffect(dropShadowButton);

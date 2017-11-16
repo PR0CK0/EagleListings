@@ -13,6 +13,9 @@
 package p1;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Objects;
+
+import javafx.beans.property.SimpleBooleanProperty;
 
 
 public class User
@@ -20,38 +23,35 @@ public class User
 	/* ---------------------- */
 	/* ----- ATTRIBUTES ----- */
 	/* ---------------------- */
+	
+	/** Is the user logged in or not? Allows GUI to be updated as needed with listeners. */
+	private SimpleBooleanProperty isLoggedIn = new SimpleBooleanProperty();
 
-	/** Name stored when a user is logged in */
+	/** UserID stored when a user is logged in. */
+	private int loggedInID;
+
+	/** Name stored when a user is logged in. */
 	private String loggedInName;
 	
-	/** Email stored when a user is logged in */
+	/** Email stored when a user is logged in. */
 	private String loggedInEmail;
 	
-	/** Password stored when a user is logged in */
+	/** Password stored when a user is logged in. */
 	private String loggedInPassword;
 	
-	/** Picture URI stored when a user is logged in */
+	/** Picture URI stored when a user is logged in. */
 	private String pictureURI;
-	
-	/** Number of good ratings stored when a user is logged in */
-	private int ratingGood;
-	
-	/** Number of bad ratings stored when a user is logged in */
-	private int ratingBad;
-	
-	/** Number of items sold stored when a user is logged in */
+
+	/** Number of items sold stored when a user is logged in. */
 	private int itemsSold;
 	
-	/** Timestamp stored when a user is logged in */
+	/** Timestamp stored when a user is logged in. */
 	private String regDate;
 	
-	/** Variable storing whether a user is logged in or not */
-	private boolean isLoggedIn;
-	
-	/** Variable storing the user's rank */
+	/** Variable storing the user's rank. */
 	private boolean isAdmin;
 	
-	/** ResultSet for querying info from the database */
+	/** ResultSet for querying info from the database. */
 	private ResultSet set;
 	
 	
@@ -60,45 +60,19 @@ public class User
 	/* -------------------------------- */
 
 	/**
-	 * Default constructor for User
+	 * Default constructor for User.
 	 */
 	public User()
 	{
 		// The user created is empty (created when the application is started)
 		// So initially, no one is logged in
-		isLoggedIn = false;
+		isLoggedIn.set(false);
 	}
-	
-	
-	/**
-	 * Test method - called in main
-	 */
-	public void test()
-	{
-		// Such try
-		try 
-		{
-			set = MainPage.sqlm.getStatement().executeQuery("SELECT name FROM users");
-			
-			while(set.next())
-			{
-				String name = set.getString("name");
-				System.out.println(name);
-			}
-		}
-		
-		// Very catch
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-			System.err.println("Failed to find passwords from database!");
-		}
-	}
-	
+
 	
 	/**
 	 * Takes in an input email and password and attempts to match them to a row in the SQL database,
-	 * through the class SQLManager
+	 * through the class SQLManager.
 	 * 
 	 * @param email
 	 * @param password
@@ -111,20 +85,22 @@ public class User
 		// Such try
 		try 
 		{
-			set = MainPage.sqlm.getStatement().executeQuery("SELECT name, email, password, admin FROM users");
+			set = MainPage.sqlm.getStatement().executeQuery("SELECT id, name, email, password, admin, itemssold FROM users");
 		
 			while(set.next())
 			{
 				// If the input email AND password match ANY email/password combo from the DB exactly, user is logged in
 				if ((email.equals(set.getString("email"))) && (password.equals(set.getString("password"))))
 				{
-					// Store the user's name, email and password
+					// Store the user's id, name, email and password
+					loggedInID = set.getInt("id");					
 					loggedInName = set.getString("name");
 					loggedInEmail = set.getString("email");
 					loggedInPassword = set.getString("password");
+					itemsSold = set.getInt("itemssold");
 				
 					// Set the logged in value so the application's NavBar can update appropriately
-					isLoggedIn = true;
+					isLoggedIn.set(true);
 					
 					// Confirmatory login message
 					System.out.println("Login successful, " + loggedInName + "!");
@@ -163,12 +139,10 @@ public class User
 	    loggedInEmail = null;
 	    loggedInPassword = null;
 	    pictureURI = null;
-		ratingGood = 0;
-		ratingBad = 0;
 		itemsSold = 0;
 		regDate = null; 
 		
-		isLoggedIn = false;
+		isLoggedIn.set(false);
 	}
 	
 	
@@ -253,9 +227,9 @@ public class User
 	 * Allows a user to create a new item listing.<br>
 	 */
 	//test
-	public void createListing()
-	//public void createListing(String title, String description, int price, String category, String imageURI, String productcondition, 
-    //String courseprefix, int year, String model, int miles, int bathroom, int bedroom)
+	//public void createListing()
+	public void createListing(String name, String itemCategory, String description, String productCondition, String price, String vehicleYear, String vehicleMiles, String vehicleBrand, String vehicleType,
+			String coursePrefix, String furnitureCategory, String furnitureRoomCategory, Integer roomBedNum, Integer roomBathNum, String roomAddress)
 	{	
 		// Set a new id to 0
 		int maxid = 0;
@@ -281,10 +255,49 @@ public class User
 			}
 			// New listing id by adding one to max
 			maxid++;
-						
-			// test
+			
+			// These next four if statements would not be necessary, but inputting a string value that may be null
+			// results in the string "null" being input into the DB... this I cannot allow
+			if (Objects.equals(itemCategory, "books"))
+			{
+				MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
+						+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', null, null, null, null, '"+coursePrefix+"', null, "
+						+ "null, null, null, null)");
+			}
+			
+			if (Objects.equals(itemCategory, "vehicles"))
+			{
+				MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
+						+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', '"+vehicleYear+"', '"+vehicleMiles+"', '"+vehicleType+"', '"+vehicleBrand+"', null, null, "
+						+ "null, null, null, null)");
+				System.out.println("vehicles brah");
+			}
+			
+			if (Objects.equals(itemCategory, "furniture"))
+			{
+				MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
+						+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', null, null, null, null, null, '"+furnitureCategory+"', "
+						+ "'"+furnitureRoomCategory+"', null, null, null)");
+			}
+			
+			if (Objects.equals(itemCategory, "rooms"))
+			{
+				MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
+						+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', null, null, null, null, null, null, "
+						+ "null, "+roomBedNum+", "+roomBathNum+", '"+roomAddress+"')");
+			}
+			
+			/*
 			MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
-			+ "VALUES ("+maxid+", 1, 'Something legal', 'Furniture', 'Totally not drugs (its drugs)', 'New', 69, null, null, null, null, null, 'comfort', 'bedroom', null, null, null)");
+					+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', '"+vehicleYear+"', '"+vehicleMiles+"', '"+vehicleType+"', '"+vehicleBrand+"', '"+coursePrefix+"', '"+furnitureCategory+"', "
+					+ "'"+furnitureRoomCategory+"', "+roomBedNum+", "+roomBathNum+", '"+roomAddress+"')");
+			 */
+			
+			// Increment items sold in the database
+			int newItemsSold = itemsSold + 1;
+			MainPage.sqlm.getStatement().executeUpdate("UPDATE users SET itemssold = ("+newItemsSold+") WHERE id = ("+loggedInID+")");
+			
+			System.out.println("Item listed successfully!");
 		} 
 		
 		// Very catch
@@ -301,19 +314,19 @@ public class User
 	 * Uses SQL commands to return any "like" results, based on user input.
 	 * 
 	 * @param userSearch
+	 * @return searchResults
 	 */
-	public void search(String userSearch)
+	public String search(String userSearch)
 	{
+		String searchResults = "";
 		try 
 		{
 			// Execute a query, grabbing all listings where the title is similar to the user's entered search term
 			set = MainPage.sqlm.getStatement().executeQuery("SELECT name FROM listings WHERE name LIKE '%"+userSearch+"%'");
-			
-			System.out.println("-----------------");
-			
+
 			while (set.next())
 			{
-				System.out.println(set.getString("name"));
+				searchResults += set.getString("name") + "\n";
 			}
 		} 
 		
@@ -321,17 +334,19 @@ public class User
 		{
 			e.printStackTrace();
 		}
+		
+		return searchResults;
 	}
 	
 	
 	/**
-	 * Getter
+	 * Getter for primitive logged in value
 	 * 
 	 * @return isLoggedIn
 	 */
 	public boolean isLoggedIn() 
 	{
-		return isLoggedIn;
+		return isLoggedIn.get();
 	}
 	
 	
@@ -342,7 +357,18 @@ public class User
 	 */
 	public void setLoggedIn(boolean isLoggedIn)
 	{
-		this.isLoggedIn = isLoggedIn;
+		this.isLoggedIn.set(isLoggedIn);
+	}
+	
+	
+	/**
+	 * Getter for logged in wrapper
+	 * 
+	 * @return isLoggedIn
+	 */
+	public SimpleBooleanProperty getIsLoggedInProperty()
+	{
+		return isLoggedIn;
 	}
 	
 	
@@ -357,13 +383,45 @@ public class User
 	}
 	
 	
-	/** 
+	/**
 	 * Getter
+	 * 
+	 * @return loggedInID
+	 */
+	public int getLoggedInID() 
+	{
+		return loggedInID;
+	}
+	
+	
+	/** 
+	 * Getter- actually retrieves the user's email from the DB when called,
+	 * unlike other getters. Needed so the user can update email.
 	 * 
 	 * @return loggedInEmail
 	 */
 	public String getLoggedInEmail() 
 	{
+		// Such try
+		try 
+		{
+			set = MainPage.sqlm.getStatement().executeQuery("SELECT email FROM users WHERE id = ("+loggedInID+")");
+			
+			// Must check set.next() otherwise we get 'SQLexception before start of result set' error
+			// https://stackoverflow.com/questions/8826247/java-sql-sqlexception-before-start-of-result-set
+			if (set.next())
+			{
+				loggedInEmail = set.getString("email");
+			}
+		} 
+		
+		// Very catch
+		catch (SQLException e) 
+		{
+			System.err.println("Could not retrieve email!");
+			e.printStackTrace();
+		}
+		
 		return loggedInEmail;
 	}
 
@@ -380,12 +438,33 @@ public class User
 
 
 	/**
-	 * Getter
+	 * Getter- actually retrieves the user's password from the DB when called,
+	 * unlike other getters. Needed so the user can update password.
 	 * 
 	 * @return loggedInPassword
 	 */
 	public String getLoggedInPassword() 
 	{
+		// Such try
+		try 
+		{
+			set = MainPage.sqlm.getStatement().executeQuery("SELECT password FROM users WHERE id = ("+loggedInID+")");
+			
+			// Must check set.next() otherwise we get 'SQLexception before start of result set' error
+			// https://stackoverflow.com/questions/8826247/java-sql-sqlexception-before-start-of-result-set
+			if (set.next())
+			{
+				loggedInEmail = set.getString("password");
+			}
+		} 
+		
+		// Very catch
+		catch (SQLException e) 
+		{
+			System.err.println("Could not retrieve password!");
+			e.printStackTrace();
+		}
+		
 		return loggedInPassword;
 	}
 	
@@ -399,28 +478,6 @@ public class User
 	public String getPictureURI() 
 	{
 		return pictureURI;
-	}
-
-
-	/**
-	 * Getter
-	 * 
-	 * @return ratingGood
-	 */
-	public int getRatingGood() 
-	{
-		return ratingGood;
-	}
-
-
-	/**
-	 * Getter
-	 * 
-	 * @return ratingBad
-	 */
-	public int getRatingBad() 
-	{
-		return ratingBad;
 	}
 
 

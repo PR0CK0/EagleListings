@@ -48,16 +48,16 @@ public class HelpScene
 		// This centers stuff inside the scrollpane
 		spHelp.setFitToWidth(true);
 		spHelp.setFitToHeight(true);
-		spHelp.setStyle("-fx-background: DarkGray");
+		spHelp.setStyle("-fx-background: DarkGray; -fx-background-color: DarkGray");
 		
-		// Labels have trouble working in scrollpanes...
-		// Text is just easier 
+		// Could NOT get a label to work... so text is fine
 		Text txtHelp = new Text("General -\n  Welcome to the EagleListings desktop application. Here you can buy and sell items with "
 				+ "other students of ERAU Daytona. If you need more specific help, please refer to the sections below. If you are not "
 				+ "a student of Embry-Riddle Aeronautical University in Daytona beach, then kindly refrain from using this service.\n\n"
 				
 				+ "Login -\n  To login to your EagleListings profile, click the Login button near the top of the application window and "
-				+ "enter your appropriate email and password, making sure to capitalize where necessary.\n\n"
+				+ "enter your appropriate email and password, making sure to capitalize where necessary. You can also create your account"
+				+ "here.\n\n"
 				
 				+ "Profile -\n  To access your EagleListings profile, click the Profile button near the top of the application window and "
 				+ "view your profile. All of your statistics will be displayed.\n\n"
@@ -67,7 +67,7 @@ public class HelpScene
 				
 				+ "Selling -\n  To list an item for sale, first create an account from the Login page and login to your account. Then "
 				+ "click the Selling button near the top of the application window to open the Selling page. While there, list your "
-				+ "item appropriately.\n\n"
+				+ "item appropriately. When you list an item, other users will be able to see your username and contact you via email.\n\n"
 				
 				+ "DISCLAIMER -\n  EagleListings and its affiliates assume no liability for any events, detrimental or otherwise, that "
 				+ "occur once you, the user, performs an action while utilizing this service.");

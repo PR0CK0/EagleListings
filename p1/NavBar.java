@@ -75,8 +75,8 @@ public class NavBar
 	/** HBox to contain search function. */
 	private HBox hbSearch = new HBox();
 	
-	/** Textfield to take in user searches */
-	private TextField tfSearchBar = new TextField();
+	/** Textfield to take in user searches. */
+	public TextField tfSearchBar = new TextField();
 	
 	/** Search button. */
 	private Button btSearch = new Button("Search");
@@ -133,12 +133,11 @@ public class NavBar
 		btSelling.setOnAction(e -> sellingButtonClick());
 		btSearch.setOnAction(e -> searchButtonClick());
 		
-		SQLManager.tfTextValidator(tfSearchBar, false);
+		// Validate text of search bar
+		TextValidation.tfTextValidator(tfSearchBar, false);
 	}
 	
 	
-	// TODO
-	// Does not work if searchable is true
 	/**
 	 * Applies a listener to the user's logged in property. 
 	 * Calls setDisables in the NavBar class, which updates any
@@ -149,6 +148,8 @@ public class NavBar
 	 */
 	protected void navListener(boolean isSearchable)
 	{
+		// Still tentative... listeners only begin if their property is changed,
+		// so the last two lines of this method are to force that
 		MainPage.sqlm.getUser().getIsLoggedInProperty().addListener((observable) ->
 		{
 			setDisables(MainPage.sqlm.getUser().isLoggedIn(), isSearchable);
@@ -309,7 +310,8 @@ public class NavBar
 		// Spit out some searches
 		ItemPage searchPage = new ItemPage("Search results");
 		MainPage.instance.getStage().getScene().setRoot(searchPage.getRootPane());
-		searchPage.spContent.setText(MainPage.sqlm.getUser().search(tfSearchBar.getText()));
+		searchPage.getListingContent().setAll(MainPage.sqlm.getUser().search(tfSearchBar.getText()));
+
 	}
 	
 	

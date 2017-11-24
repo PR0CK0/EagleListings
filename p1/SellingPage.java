@@ -223,7 +223,7 @@ public class SellingPage
 		cbFurnitureCategory.getItems().addAll("Bed", "Chair", "Couch", "Table", "Other");
 		nav.setComboBoxStyle(cbFurnitureCategory);
 		cbFurnitureRoomCategory.setPromptText("Room category");
-		cbFurnitureRoomCategory.getItems().addAll("Bedroom", "Bathroom", "Livingroom", "Outdoor");
+		cbFurnitureRoomCategory.getItems().addAll("Bedroom", "Bathroom", "Living", "Outdoor");
 		nav.setComboBoxStyle(cbFurnitureRoomCategory);
 		
 		// ROOMS
@@ -246,21 +246,21 @@ public class SellingPage
 		vbSelling.getChildren().addAll(nav.getNavBar(), lblSelling, lblBadEntry, tfTitle, taDescription, lblCharactersLeft, tfPrice, btImage, cbProductCondition, cbItemCategory, hbItemInfo, btOk);
 		
 		// Text validation
-		SQLManager.tfTextValidator(tfTitle, false);
-		SQLManager.taTextValidator(taDescription);
-		SQLManager.tfTextValidator(tfPrice, true);
-		SQLManager.tfTextValidator(tfCoursePrefix, false);
-		SQLManager.tfTextValidator(tfRoomAddress, false);
-		SQLManager.tfTextValidator(tfVehicleBrand, false);
-		SQLManager.tfTextValidator(tfVehicleMiles, true);
-		SQLManager.tfTextValidator(tfVehicleYear, true);
-		SQLManager.tfLengthLimiter(tfTitle, TITLE_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfPrice, PRICE_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfCoursePrefix, BOOKS_COURSE_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfVehicleYear, VEHICLES_YEARS_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfVehicleMiles, VEHICLES_MILES_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfVehicleBrand, VEHICLES_BRAND_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfRoomAddress, ROOMS_ADDRESS_CHARS_ALLOWED);
+		TextValidation.tfTextValidator(tfTitle, false);
+		TextValidation.taTextValidator(taDescription);
+		TextValidation.tfTextValidator(tfPrice, true);
+		TextValidation.tfTextValidator(tfCoursePrefix, false);
+		TextValidation.tfTextValidator(tfRoomAddress, false);
+		TextValidation.tfTextValidator(tfVehicleBrand, false);
+		TextValidation.tfTextValidator(tfVehicleMiles, true);
+		TextValidation.tfTextValidator(tfVehicleYear, true);
+		TextValidation.tfLengthLimiter(tfTitle, TITLE_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfPrice, PRICE_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfCoursePrefix, BOOKS_COURSE_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfVehicleYear, VEHICLES_YEARS_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfVehicleMiles, VEHICLES_MILES_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfVehicleBrand, VEHICLES_BRAND_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfRoomAddress, ROOMS_ADDRESS_CHARS_ALLOWED);
 
 		// Functionality for nodes
 		btImage.setOnAction(e -> imageButtonClick());

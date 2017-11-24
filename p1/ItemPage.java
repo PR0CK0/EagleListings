@@ -3,17 +3,19 @@
  * @author Tyler Procko
  * @date 09/2017 - 11/2017 
  * 
- *UI class for item display.<br>
+ * UI class for item display.<br>
  * 
  */
 
 
 package p1;
-import javafx.animation.Timeline;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
@@ -40,9 +42,6 @@ public class ItemPage
 	private GridPane gpItems = new GridPane();
 	
 	/** Scrollpane for displaying items */
-	private ScrollPane spItems = new ScrollPane();
-	
-	public static Label spContent = new Label();
 	
 	/** Vbox to contain sorting options. */
 	private VBox vbSort = new VBox(5);
@@ -58,6 +57,10 @@ public class ItemPage
 	
 	/** Drop-down box for sorting by post time. */
 	private ComboBox<String> cbPostTime = new ComboBox<>();
+	
+	// TODO
+	private ObservableList<Listing> listingContentList = FXCollections.observableArrayList();
+	ListView<Listing> lvListings = new ListView<Listing>(listingContentList);
 
 	
 	/* -------------------------------- */
@@ -74,11 +77,7 @@ public class ItemPage
 	 * @param itemType
 	 */
 	protected ItemPage(String itemType)
-	{
-		// TODO
-		// temp reset
-		spContent.setText("");
-		
+	{		
 		// Set up the title label
 		lblItem.setText(itemType);
 		lblItem.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold");
@@ -102,18 +101,38 @@ public class ItemPage
 		// Container node for the sorting nodes
 		vbSort.getChildren().addAll(lblSortBy, cbSortBy, lblPostTime, cbPostTime);
 		
-		// Set scrollpane for item browsing
-		spItems.setContent(spContent);
-		spItems.setMinSize(590, 590);
-		spItems.setMaxSize(590, 590);
-		spItems.setStyle("-fx-background: Gray; -fx-background-color: Gray");
-		spContent.setWrapText(true);
-		spContent.setStyle("-fx-font-size: 2em");
-		spContent.setMaxSize(650, Integer.MAX_VALUE);
+		// Add items to the observavle array list based on item category
+		if (itemType.equals("Books"))
+		{
+			listingContentList.setAll(MainPage.sqlm.getUser().findItems("books"));
+		}
+		
+		if (itemType.equals("Vehicles"))
+		{
+			listingContentList.setAll(MainPage.sqlm.getUser().findItems("vehicles"));
+		}
+		
+		if (itemType.equals("Furniture"))
+		{
+			listingContentList.setAll(MainPage.sqlm.getUser().findItems("furniture"));
+		}
+		
+		if (itemType.equals("Rooms"))
+		{
+			listingContentList.setAll(MainPage.sqlm.getUser().findItems("rooms"));
+		}
+		
+		// Listview functionality for item browsing
+		lvListings.setMinSize(590, 590);
+		lvListings.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
+		lvListings.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends Listing> ov, Listing old_val, Listing new_val) -> 
+		{
+			itemClick(new_val);
+		});
 		
 		// Add all nodes to the gridpane
 		gpItems.add(vbSort, 0, 0);
-		gpItems.add(spItems, 1, 0);
+		gpItems.add(lvListings, 1, 0);
 		gpItems.setAlignment(Pos.CENTER);
 		gpItems.setMinSize(650, 650);
 		gpItems.setHgap(10);
@@ -129,6 +148,27 @@ public class ItemPage
 		});
 		MainPage.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.sqlm.getUser().isLoggedIn());
 		MainPage.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.sqlm.getUser().isLoggedIn());
+	}
+	
+	
+	/**
+	 * Functionality for a listed item being clicked.
+	 */
+	private void itemClick(Listing clickedItem)
+	{
+		SpecificItemPage obj = new SpecificItemPage(clickedItem);
+		MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+	}
+	
+	
+	/**
+	 * Getter
+	 * 
+	 * @return listingContentList
+	 */
+	public ObservableList<Listing> getListingContent() 
+	{
+		return listingContentList;
 	}
 	
 	

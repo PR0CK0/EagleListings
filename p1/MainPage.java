@@ -40,6 +40,7 @@ public class MainPage extends Application
 	
 	/** Stage width constant. */
 	public static final int STAGE_WIDTH = 850;
+	
 	/** Stage height constant. */
 	public static final int STAGE_HEIGHT = 850;
 	
@@ -199,6 +200,7 @@ public class MainPage extends Application
 	private void booksButtonClick()
 	{
 		ItemPage obj = new ItemPage("Books");
+		//SpecificItemPage obj = new SpecificItemPage("Books");
 		stage.getScene().setRoot(obj.getRootPane());
 	}
 	
@@ -294,7 +296,6 @@ public class MainPage extends Application
 				e.printStackTrace();
 				System.err.println("Could not close connection to database!");
 			}
-	    }
-	    
+	    } 
 	}
 }

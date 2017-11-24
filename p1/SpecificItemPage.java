@@ -1,5 +1,7 @@
-* @author Asia Wright 
- * @date 09/2017 - 11/2017 
+/** 
+ * 
+ * @author Asia Wright 
+ * @date 11/2017 
  * 
  * UI class for viewing a specific, selected item.<br>
  * 
@@ -7,96 +9,133 @@
 
 
 package p1;
-
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
-//TODO
-// Everything.
 
 public class SpecificItemPage 
 {
 	/* ---------------------- */
 	/* ----- ATTRIBUTES ----- */
 	/* ---------------------- */
+
+	/** Overall Vbox for the specific item page. */
+	private VBox vbSpecificItemPage= new VBox(15);
 	
+	/** Navbar instance. */
+	private NavBar nav = new NavBar();
 	
-	//Vboxes for the image and overall specific item page
-	private VBox vbspecificItemPage= new VBox(50);
+	/** Label for title. */
+	private Label lblTitle; 
+
+	/** Image for item. */
+	private Image img;
 	
-	private VBox imageholder= new VBox(20);
+	/** Image wrapper. */
+	private ImageView imgItem = new ImageView();
 	
-	///Labels that all items will relay on
+	/** Scrollpane for description. */
+	private ScrollPane spDescription;
 	
-	protected Label itemtitle;
-	protected Label itemdetail;
-	protected Label itemprice;
-	protected Label itemcondition;
-	protected Label sellerinfo;
+	/** Label for description. */
+	private Label lblDescription;
 	
-	private NavBar nav= new NavBar();
-	protected GridPane gpforpage=new GridPane();
+	/** Label for price. */
+	private Label lblPrice;
 	
+	/** Label for condition. */
+	private Label lblItemCondition;
+
+	/** Vbox for specific item type info. */
+	private VBox vbItemInfo = new VBox(10);
+	
+	/** Button to email the seller. */
+	private Button btEmail = new Button("Contact seller");
 	
 
-	
-	
-	
 	/* -------------------------------- */
 	/* ----- METHODS/CONSTRUCTORS ----- */
 	/* -------------------------------- */
 	
-	//this method displays the item page based on what type of item it is
-	protected SpecificItemPage(String Item){
-		itemtitle=new Label("Item title");
-		itemdetail=new Label("Detail for item:");
-		itemprice=new Label("Price:");
-		itemcondition=new Label("Condition:");
-		sellerinfo=new Label("seller Id");
+	/**
+	 * Constructor for specific item page. Takes in a string representing
+	 * the item type (books, vehicles, furniture or rooms) to decide how the
+	 * UI layout should look.
+	 * 
+	 * @param item
+	 */
+	protected SpecificItemPage(Listing item)
+	{
+		lblTitle = new Label(item.name);
+		lblDescription = new Label(item.description);
+		lblDescription.setWrapText(true);
+		lblDescription.setMaxSize(650, Integer.MAX_VALUE);
+		spDescription = new ScrollPane(lblDescription);
+		spDescription.setMinSize(650, 150);
+		spDescription.setMaxSize(650, 150);	
+		spDescription.setStyle("-fx-background: Gray; -fx-background-color: Gray");
+		spDescription.setHbarPolicy(ScrollBarPolicy.NEVER);
+		lblPrice = new Label("Price: $" + item.price);
+		lblItemCondition = new Label("Condition: " + item.condition);
+		lblTitle.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 2em; -fx-font-weight: bold");
+		lblDescription.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em");
+		lblPrice.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
+		lblItemCondition.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
+		Label lblSpecificInfo = new Label("");
+		lblSpecificInfo.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
 		
-		if(Item.equals("Books")){
-			 Label bcourse=new Label("Course Id");
-			 
-			 
-			 vbspecificItemPage.getChildren().addAll(bcourse);
+		if (item.category.equalsIgnoreCase("Books"))
+		{ 
+			 img = new Image("p1/img/books.png", 150, 150, true, true);
 		}
 		
-		else if(Item.equals("Vehicles")){
-			Label Miles= new Label("Miles");
-			Label Year= new Label("Year");
-			Label Type=new Label("Type of car");
-			Label Brand=new Label("Brand");
-			
-			
-			vbspecificItemPage.getChildren().addAll(Miles,Year, Type, Brand);
+		else if (item.category.equalsIgnoreCase("Vehicles"))
+		{
+		    img = new Image("p1/img/vehicles.png", 150, 150, true, true);
 		}
 		
-		else if (Item.equals("Rooms")){
-			Label ambeds=new Label("amount of beds");
-			Label ambath=new Label("Number of bath");
-			Label address=new Label("Address");
-			
-			vbspecificItemPage.getChildren().addAll(ambeds, ambath,address);
+		else if (item.category.equalsIgnoreCase("Rooms"))
+		{
+			img = new Image("p1/img/rooms.png", 150, 150, true, true);
 		}
 		
-		else if (Item.equals("Furniture")){
-			Label type= new Label("Room category");
-			vbspecificItemPage.getChildren().addAll(type);
+		else if (item.category.equalsIgnoreCase("Furniture"))
+		{
+			img = new Image("p1/img/furniture.png", 150, 150, true, true);
 		}
 		
-		gpforpage.setAlignment(Pos.TOP_CENTER);	
-		gpforpage.add(imageholder, 0, 0);
+		lblSpecificInfo.setText(item.specificInfo);
+		lblSpecificInfo.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.3em; -fx-font-weight: bold");
+		lblSpecificInfo.setTextAlignment(TextAlignment.CENTER);
 		
-		
-		vbspecificItemPage.setAlignment(Pos.TOP_CENTER);
-		vbspecificItemPage.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
-		vbspecificItemPage.getChildren().addAll(itemtitle, itemprice, itemdetail, itemcondition, sellerinfo,gpforpage);
-		
+		imgItem.setImage(img);
+		vbItemInfo.setAlignment(Pos.CENTER);
+		nav.setButtonStyleRound(btEmail);
+
+		vbSpecificItemPage.setAlignment(Pos.TOP_CENTER);
+		vbSpecificItemPage.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
+		vbSpecificItemPage.getChildren().addAll(nav.getNavBar(), lblTitle, imgItem, lblPrice, spDescription, lblItemCondition, lblSpecificInfo, btEmail);
+	}
+	
+	
+	/**
+	 * Getter
+	 * 
+	 * @return vbItemPage
+	 */
+	protected VBox getRootPane()
+	{
+		return vbSpecificItemPage;
 	}
 }

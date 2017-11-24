@@ -3,7 +3,6 @@
  * @author Tyler Procko
  * @date 10/2017 - 11/2017
  *  
- *  
  * User class. Defines functionality for logging in and out, creating a new account,
  * posting items and searching items.
  * 
@@ -13,8 +12,8 @@
 package p1;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Objects;
-
 import javafx.beans.property.SimpleBooleanProperty;
 
 
@@ -316,17 +315,42 @@ public class User
 	 * @param userSearch
 	 * @return searchResults
 	 */
-	public String search(String userSearch)
+	public ArrayList<Listing> search(String userSearch)
 	{
-		String searchResults = "";
+		ArrayList<Listing> searchResults = new ArrayList<>();
 		try 
 		{
 			// Execute a query, grabbing all listings where the title is similar to the user's entered search term
-			set = MainPage.sqlm.getStatement().executeQuery("SELECT name FROM listings WHERE name LIKE '%"+userSearch+"%'");
-
+			set = MainPage.sqlm.getStatement().executeQuery("SELECT * FROM listings WHERE name LIKE '%"+userSearch+"%'");
+			
 			while (set.next())
 			{
-				searchResults += set.getString("name") + "\n";
+				String specificInfo = "";
+				
+				if (set.getString("category").equals("books"))
+				{
+					specificInfo = "Course prefix: " + set.getString("bookprefix");
+				}
+				
+				if (set.getString("category").equals("vehicles"))
+				{
+					specificInfo = "Year: " + set.getString("vehicleyear") + "\n" + "Miles: " + set.getString("vehiclemiles")
+						+ "\n" + "Brand: " + set.getString("vehiclebrand") + "\n" + "Type: " + set.getString("vehicletype");
+				}
+				
+				if (set.getString("category").equals("furniture"))
+				{
+					specificInfo = "Type: " + set.getString("furncategory") + "\n" + "Room type: " + set.getString("furnroomcategory");
+				}
+				
+				if (set.getString("category").equals("rooms"))
+				{
+					specificInfo = "Bedroom number: " + set.getString("roombednum") + "\n" + "Bathroom number: " + set.getString("roombathnum") 
+						+ "\n" + "Room address: " + set.getString("roomaddress");
+				}
+				System.out.println("eaa");
+				
+				searchResults.add(new Listing(set.getString("sellerid"), set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
 			}
 		} 
 		
@@ -340,7 +364,61 @@ public class User
 	
 	
 	/**
-	 * Getter for primitive logged in value
+	 * Finds all posted items given an item type.
+	 * 
+	 * @param itemType
+	 * @return itemResults
+	 */
+	public ArrayList<Listing> findItems(String itemType)
+	{
+		ArrayList<Listing> itemResults = new ArrayList<>();
+		
+		try 
+		{
+			set = MainPage.sqlm.getStatement().executeQuery("SELECT * FROM listings WHERE category = '"+itemType+"'");
+			
+			while(set.next())
+			{
+				String specificInfo = "";
+				
+				if (set.getString("category").equals("books"))
+				{
+					specificInfo = "Course prefix: " + set.getString("bookprefix");
+				}
+				
+				if (set.getString("category").equals("vehicles"))
+				{
+					specificInfo = "Year: " + set.getString("vehicleyear") + "\n" + "Miles: " + set.getString("vehiclemiles")
+						+ "\n" + "Brand: " + set.getString("vehiclebrand") + "\n" + "Type: " + set.getString("vehicletype");
+				}
+				
+				if (set.getString("category").equals("furniture"))
+				{
+					specificInfo = "Type: " + set.getString("furncategory") + "\n" + "Room type: " + set.getString("furnroomcategory");
+				}
+				
+				if (set.getString("category").equals("rooms"))
+				{
+					specificInfo = "Bedroom number: " + set.getString("roombednum") + "\n" + "Bathroom number: " + set.getString("roombathnum") 
+						+ "\n" + "Room address: " + set.getString("roomaddress");
+				}
+				
+				itemResults.add(new Listing(set.getString("sellerid"), set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
+			}
+		} 
+		
+		catch (SQLException e) 
+		{
+			System.err.println("Could not retrieve listed items given type.");
+			e.printStackTrace();
+		}
+		
+		return itemResults;
+	}
+	
+	
+	/**
+	 * Getter for primitive logged in value.
 	 * 
 	 * @return isLoggedIn
 	 */

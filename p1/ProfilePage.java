@@ -86,8 +86,10 @@ public class ProfilePage
 		
 		// For now I've just set it to a default one until retrieval from Carson's server can be handled
 		String imgURI = "p1/img/default_profile.png";
-		img = new Image(imgURI, 350, 350, true, true);
+		//String imgURI = "http://eaglelistings.epizy.com/img/avatars/default.png";
+      	img = new Image(imgURI);
 		imgProfile.setImage(img);
+		//imgProfile = new ImageView(new Image("http://eaglelistings.epizy.com/img/avatars/default.png?i=1"));
 		
 		// Set button's style
 		nav.setButtonStyleSharp(btChangeEmail);
@@ -100,9 +102,10 @@ public class ProfilePage
 		// Set VBox for use
 		vbProfile.setAlignment(Pos.TOP_CENTER);
 		vbProfile.setMinSize(500, 500);
+		vbProfile.setMaxSize(1000, 1000);
 		vbProfile.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
 		vbProfile.setMinSize(MainPage.STAGE_WIDTH, MainPage.STAGE_HEIGHT);
-		vbProfile.getChildren().addAll(nav.getNavBar(), lblUsername, lblInfo, imgProfile, hbChange);
+		vbProfile.getChildren().addAll(nav.getNavBar(), lblUsername, lblInfo, imgProfile, new Label("Should be here"), hbChange);
 		
 		// Button functionality
 		btChangeEmail.setOnAction(e -> changeEmailButtonClick());
@@ -173,6 +176,10 @@ public class ProfilePage
 		tf2.setMaxWidth(280);
 		nav.setTextFieldStyle(tf1);
 		nav.setTextFieldStyle(tf2);
+		
+		// Validate text
+		TextValidation.tfTextValidator(tf1, false);
+		TextValidation.tfTextValidator(tf2, false);
 		
 		// Ok button to close stage 
 		Button btOk = new Button("Ok");

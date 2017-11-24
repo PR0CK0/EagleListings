@@ -132,10 +132,10 @@ public class LoginPage
 		vbLogin.setAlignment(Pos.TOP_CENTER);
 		
 		// Validate input text and limit length
-		SQLManager.tfTextValidator(tfEmail, false);
-		SQLManager.tfTextValidator(pfPassword, false);
-		SQLManager.tfLengthLimiter(tfEmail, EMAIL_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(pfPassword, PASSWORD_CHARS_ALLOWED);
+		TextValidation.tfTextValidator(tfEmail, false);
+		TextValidation.tfTextValidator(pfPassword, false);
+	    TextValidation.tfLengthLimiter(tfEmail, EMAIL_CHARS_ALLOWED);
+	    TextValidation.tfLengthLimiter(pfPassword, PASSWORD_CHARS_ALLOWED);
 		
 		// Button functionality
 		btLogin.setOnAction(e -> loginButtonClick());
@@ -230,14 +230,14 @@ public class LoginPage
 		stageNewUser.setScene(sceneNewUser);
 		
 		// Text validation and limiting
-		SQLManager.tfTextValidator(tfName, false);
-		SQLManager.tfTextValidator(tfEmail, false);
-		SQLManager.tfTextValidator(tfPassword1, false);
-		SQLManager.tfTextValidator(tfPassword2, false);
-		SQLManager.tfLengthLimiter(tfName, NAME_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfEmail, EMAIL_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfPassword1, PASSWORD_CHARS_ALLOWED);
-		SQLManager.tfLengthLimiter(tfPassword2, PASSWORD_CHARS_ALLOWED);
+		TextValidation.tfTextValidator(tfName, false);
+		TextValidation.tfTextValidator(tfEmail, false);
+		TextValidation.tfTextValidator(tfPassword1, false);
+		TextValidation.tfTextValidator(tfPassword2, false);
+		TextValidation.tfLengthLimiter(tfName, NAME_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfEmail, EMAIL_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfPassword1, PASSWORD_CHARS_ALLOWED);
+		TextValidation.tfLengthLimiter(tfPassword2, PASSWORD_CHARS_ALLOWED);
 		
 		//TODO
 		// Sending it to Carson's server

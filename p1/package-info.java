@@ -5,6 +5,10 @@
  */
 package p1;
 
+import java.sql.SQLException;
+
+import javafx.scene.control.TextField;
+
 /*
 public static void tfTextValidator(TextField tf)
 {
@@ -144,4 +148,77 @@ private void gameLoop()
 /*
 	//MainPage.instance.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.instance.sqlm.getUser().getIsLoggedInProperty().get());
 	//MainPage.instance.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.instance.sqlm.getUser().getIsLoggedInProperty().get());
+*/
+
+
+/*
+ /**
+	public static void tfTextValidator(TextField tf, boolean numbersOnly)
+	{
+		// Numbers only
+		if (numbersOnly)
+		{
+			// Listener bound to the textfield
+			tf.textProperty().addListener((var, oldText, newText) ->
+			{
+				if(newText.length() > 0)
+				{
+					// Essentially checking the last character (what the user is inputting REAL-TIME),
+					// to see if it matches the regex 0-9
+					// If the character entered is bad, reset the textfield to the previous
+					if (!(newText.substring(newText.length() - 1)).matches("[0-9]"))
+					{
+						tf.setText(oldText);
+					}
+				}
+			});
+			
+			tfRegexChecker(tf, "[0-9]");
+		}
+		
+		// Regular limitation
+		else
+		{
+			
+			// Listener bound to the textfield
+			tf.textProperty().addListener((var, oldText, newText) ->
+			{
+				if(newText.length() > 0)
+				{
+					// Essentially checking the last character (what the user is inputting REAL-TIME),
+					// to see if it matches the regex A-Z, a-z, 0-9, periods, at symbols (for emails) and exclamation points
+					if (!(newText.substring(newText.length() - 1)).matches("[a-z A-Z 0-9 . @ !]"))
+					{
+						tf.setText(oldText);
+					}
+				}
+			});
+			
+			tfRegexChecker(tf, "[a-z A-Z 0-9 . @ !]");
+		}
+	}
+*/
+
+/*
+ public String search(String userSearch)
+	{
+		String searchResults = "";
+		try 
+		{
+			// Execute a query, grabbing all listings where the title is similar to the user's entered search term
+			set = MainPage.sqlm.getStatement().executeQuery("SELECT name, category FROM listings WHERE name LIKE '%"+userSearch+"%'");
+
+			while (set.next())
+			{
+				searchResults += set.getString("name") + ", " + set.getString("category") + "\n";
+			}
+		} 
+		
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return searchResults;
+	}
 */

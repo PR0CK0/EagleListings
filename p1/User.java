@@ -348,7 +348,6 @@ public class User
 					specificInfo = "Bedroom number: " + set.getString("roombednum") + "\n" + "Bathroom number: " + set.getString("roombathnum") 
 						+ "\n" + "Room address: " + set.getString("roomaddress");
 				}
-				System.out.println("eaa");
 				
 				searchResults.add(new Listing(set.getString("sellerid"), set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
 			}

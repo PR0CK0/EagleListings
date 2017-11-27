@@ -20,6 +20,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BackgroundImage;
@@ -101,6 +102,7 @@ public class MainPage extends Application
 	{
 		// Set for use (so we can return to MainPage from other pages)
 		stage = stagePrimary;
+		stagePrimary.getIcons().add(new Image("p1/img/logo.jpg"));
 		instance = this;
 		
 		// Scene to contain all nodes
@@ -114,7 +116,7 @@ public class MainPage extends Application
 		nav.setButtonStyleRound(btVehicles);
 		nav.setButtonStyleRound(btFurniture);
 		nav.setButtonStyleRound(btRooms);
-		
+
 		// Add all children to the main VBox and set up its looks
 		vbMainPage.getChildren().addAll(nav.getNavBar(), gpBooks, btBooks, gpVehicles, btVehicles, gpFurniture, btFurniture, gpRooms, btRooms);
 		vbMainPage.setBackground(new Background(new BackgroundFill[]{new BackgroundFill(Color.DARKGREY, null, null)}, 
@@ -147,51 +149,41 @@ public class MainPage extends Application
 	private void setUpGridPanes()
 	{	
 		// Set up the gridpanes
-		// TODO
-		// This is where the most recent item images would be displayed
-		gpBooks.add(new Circle(50, Color.DARKCYAN), 0, 0);
-		gpBooks.add(new Circle(50, Color.BURLYWOOD), 1, 0);
-		gpBooks.add(new Circle(50, Color.DARKGOLDENROD), 2, 0);
-		gpBooks.add(new Circle(50, Color.DARKORCHID), 3, 0);
-		gpBooks.add(new Circle(50, Color.BLANCHEDALMOND), 4, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 0, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 1, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 2, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 3, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 4, 0);
 		gpBooks.setHgap(10);
 		gpBooks.setPadding(new Insets(10, 0, 10, 0));
-		gpBooks.setMinWidth(600);
 		gpBooks.setAlignment(Pos.CENTER);
-		gpBooks.setGridLinesVisible(true);
 		
-		gpVehicles.add(new Circle(50, Color.FUCHSIA), 0, 0);
-		gpVehicles.add(new Circle(50, Color.GAINSBORO), 1, 0);
-		gpVehicles.add(new Circle(50, Color.GOLD), 2, 0);
-		gpVehicles.add(new Circle(50, Color.LIGHTSALMON), 3, 0);
-		gpVehicles.add(new Circle(50, Color.DEEPPINK), 4, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 0, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 1, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 2, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 3, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 4, 0);
 		gpVehicles.setHgap(10);
 		gpVehicles.setPadding(new Insets(10, 0, 10, 0));
-		gpVehicles.setMinWidth(500);
 		gpVehicles.setAlignment(Pos.CENTER);
-		gpVehicles.setGridLinesVisible(true);
 		
-		gpFurniture.add(new Circle(50, Color.HOTPINK), 0, 0);
-		gpFurniture.add(new Circle(50, Color.KHAKI), 1, 0);
-		gpFurniture.add(new Circle(50, Color.MEDIUMSLATEBLUE), 2, 0);
-		gpFurniture.add(new Circle(50, Color.MAGENTA), 3, 0);
-		gpFurniture.add(new Circle(50, Color.BISQUE), 4, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 0, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 1, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 2, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 3, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 4, 0);
 		gpFurniture.setHgap(10);
 		gpFurniture.setPadding(new Insets(10, 0, 10, 0));
-		gpFurniture.setMinWidth(500);
 		gpFurniture.setAlignment(Pos.CENTER);
-		gpFurniture.setGridLinesVisible(true);
 		
-		gpRooms.add(new Circle(50, Color.SADDLEBROWN), 0, 0);
-		gpRooms.add(new Circle(50, Color.OLIVEDRAB), 1, 0);
-		gpRooms.add(new Circle(50, Color.ROSYBROWN), 2, 0);
-		gpRooms.add(new Circle(50, Color.SEAGREEN), 3, 0);
-		gpRooms.add(new Circle(50, Color.PLUM), 4, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 0, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 1, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 2, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 3, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 4, 0);
 		gpRooms.setHgap(10);
 		gpRooms.setPadding(new Insets(10, 0, 10, 0));
-		gpRooms.setMinWidth(500);
 		gpRooms.setAlignment(Pos.CENTER);
-		gpRooms.setGridLinesVisible(true);
 	}
 	
 	/**

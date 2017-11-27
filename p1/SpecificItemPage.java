@@ -126,6 +126,13 @@ public class SpecificItemPage
 		vbSpecificItemPage.setAlignment(Pos.TOP_CENTER);
 		vbSpecificItemPage.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
 		vbSpecificItemPage.getChildren().addAll(nav.getNavBar(), lblTitle, imgItem, lblPrice, spDescription, lblItemCondition, lblSpecificInfo, btEmail);
+		
+		MainPage.sqlm.getUser().getIsLoggedInProperty().addListener((observable) ->
+		{
+			nav.setDisables(MainPage.sqlm.getUser().isLoggedIn(), true);
+		});
+		MainPage.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.sqlm.getUser().isLoggedIn());
+		MainPage.sqlm.getUser().getIsLoggedInProperty().set(!MainPage.sqlm.getUser().isLoggedIn());
 	}
 	
 	

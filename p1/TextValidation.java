@@ -76,7 +76,7 @@ public class TextValidation
 			{
 				// Essentially checking the last character (what the user is inputting REAL-TIME),
 				// to see if it matches the regex A-Z, a-z, 0-9 and periods
-				if (!(newText.substring(newText.length() - 1)).matches("[a-z A-Z 0-9 .]"))
+				if (!(newText.substring(newText.length() - 1)).matches("[a-z A-Z 0-9 . , -]"))
 				{
 					ta.setText(oldText);
 				}

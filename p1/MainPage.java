@@ -15,10 +15,12 @@ package p1;
 import java.sql.SQLException;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -29,7 +31,6 @@ import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 
@@ -59,17 +60,8 @@ public class MainPage extends Application
 	/** NavBar instance, for navigating to other pages. */
 	private NavBar nav = new NavBar();
 
-	/** Gridpane containing book listings. */
-	private GridPane gpBooks = new GridPane();
-	
-	/** Gridpane containing vehicle listings. */
-	private GridPane gpVehicles = new GridPane();
-	
-	/** Gridpane containing furniture listings. */
-	private GridPane gpFurniture = new GridPane();
-	
-	/** Gridpane containg rooms listings. */
-	private GridPane gpRooms = new GridPane();
+	/** Gridpane containing all listing info. */
+	private GridPane gpItems = new GridPane();
 	
 	/** Button for books. */
 	private Button btBooks = new Button("Books");
@@ -82,6 +74,9 @@ public class MainPage extends Application
 	
 	/** Button for rooms. */
 	private Button btRooms = new Button("Rooms");
+	
+	/** Disclaimer label */
+	private Label lblDisclaimer = new Label();
 	
 	/** 
 	 * Public instance of the SQLManager class.<br>
@@ -102,32 +97,40 @@ public class MainPage extends Application
 	{
 		// Set for use (so we can return to MainPage from other pages)
 		stage = stagePrimary;
-		stagePrimary.getIcons().add(new Image("p1/img/logo.jpg"));
 		instance = this;
 		
 		// Scene to contain all nodes
 		sceneMainPage = new Scene(vbMainPage, STAGE_WIDTH, STAGE_HEIGHT);
-	
-		// Method to set up the grid panes
-		setUpGridPanes();
+
+		// Set up gpItems
+		setUpGridPane();
 		
 		// Make buttons pretty
 		nav.setButtonStyleRound(btBooks);
 		nav.setButtonStyleRound(btVehicles);
 		nav.setButtonStyleRound(btFurniture);
 		nav.setButtonStyleRound(btRooms);
+		VBox.setMargin(btVehicles, new Insets(0, 0, 12, 0));
+		VBox.setMargin(btFurniture, new Insets(0, 0, 5, 0));
+		
+		// Set up disclaimer label
+		lblDisclaimer.setText("© Group JJCAT - SE300, Fall 2017");
+		lblDisclaimer.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.1em");
+		VBox.setMargin(lblDisclaimer, new Insets(65, 0, 0, 0));
 
 		// Add all children to the main VBox and set up its looks
-		vbMainPage.getChildren().addAll(nav.getNavBar(), gpBooks, btBooks, gpVehicles, btVehicles, gpFurniture, btFurniture, gpRooms, btRooms);
+		//vbMainPage.getChildren().addAll(nav.getNavBar(), gpBooks, btBooks, gpVehicles, btVehicles, gpFurniture, btFurniture, gpRooms, btRooms, lblDisclaimer);
+		vbMainPage.getChildren().addAll(nav.getNavBar(), gpItems, lblDisclaimer);
 		vbMainPage.setBackground(new Background(new BackgroundFill[]{new BackgroundFill(Color.DARKGREY, null, null)}, 
 				new BackgroundImage[]{new BackgroundImage(new Image("p1/img/EmbryRiddleEagles.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, null)}));
 		vbMainPage.setAlignment(Pos.TOP_CENTER);
 		vbMainPage.setSpacing(5);
 		
 		// Display everything in the stage, editing its properties
-		stagePrimary.setResizable(true);
 		stagePrimary.setMinWidth(STAGE_WIDTH);
 		stagePrimary.setMinHeight(STAGE_HEIGHT);
+		stagePrimary.setResizable(false);
+		stagePrimary.getIcons().add(new Image("p1/img/logo.jpg"));
 		stagePrimary.setTitle("EagleListings - Buying and Selling for Eagles");
 		stagePrimary.setScene(sceneMainPage);
 		stagePrimary.show();
@@ -143,48 +146,28 @@ public class MainPage extends Application
 	}
 	
 	
-	/**
-	 * Sets up the main page's gridpane with the most recent items of each category.
+	/** 
+	 * Sets up the big gridpane in this page.
 	 */
-	private void setUpGridPanes()
-	{	
-		// Set up the gridpanes
-		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 0, 0);
-		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 1, 0);
-		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 2, 0);
-		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 3, 0);
-		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 4, 0);
-		gpBooks.setHgap(10);
-		gpBooks.setPadding(new Insets(10, 0, 10, 0));
-		gpBooks.setAlignment(Pos.CENTER);
-		
-		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 0, 0);
-		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 1, 0);
-		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 2, 0);
-		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 3, 0);
-		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 4, 0);
-		gpVehicles.setHgap(10);
-		gpVehicles.setPadding(new Insets(10, 0, 10, 0));
-		gpVehicles.setAlignment(Pos.CENTER);
-		
-		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 0, 0);
-		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 1, 0);
-		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 2, 0);
-		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 3, 0);
-		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 4, 0);
-		gpFurniture.setHgap(10);
-		gpFurniture.setPadding(new Insets(10, 0, 10, 0));
-		gpFurniture.setAlignment(Pos.CENTER);
-		
-		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 0, 0);
-		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 1, 0);
-		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 2, 0);
-		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 3, 0);
-		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 4, 0);
-		gpRooms.setHgap(10);
-		gpRooms.setPadding(new Insets(10, 0, 10, 0));
-		gpRooms.setAlignment(Pos.CENTER);
+	private void setUpGridPane()
+	{
+		gpItems.add(new ImageView(new Image("p1/img/books.png", 240, 240, true, true)), 0, 0);
+		gpItems.add(new ImageView(new Image("p1/img/vehicles.png", 240, 240, true, true)), 1, 0);
+		gpItems.add(btBooks, 0, 1);
+		gpItems.add(btVehicles, 1, 1);
+		GridPane.setHalignment(btBooks, HPos.CENTER);
+		GridPane.setHalignment(btVehicles, HPos.CENTER);
+		gpItems.add(new ImageView(new Image("p1/img/furniture.png", 240, 240, true, true)), 0, 2);
+		gpItems.add(new ImageView(new Image("p1/img/rooms.png", 240, 240, true, true)), 1, 2);
+		gpItems.add(btFurniture, 0, 3);
+		gpItems.add(btRooms, 1, 3);
+		GridPane.setHalignment(btFurniture, HPos.CENTER);
+		GridPane.setHalignment(btRooms, HPos.CENTER);
+		gpItems.setHgap(175);
+		gpItems.setVgap(40);
+		gpItems.setAlignment(Pos.CENTER);
 	}
+	
 	
 	/**
 	 * Functionality for Books button click

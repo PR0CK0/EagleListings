@@ -10,7 +10,6 @@
 
 package p1;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPane.ScrollBarPolicy;
@@ -20,7 +19,6 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 
 
@@ -60,9 +58,6 @@ public class SpecificItemPage
 	/** Vbox for specific item type info. */
 	private VBox vbItemInfo = new VBox(10);
 	
-	/** Button to email the seller. */
-	private Button btEmail = new Button("Contact seller");
-	
 
 	/* -------------------------------- */
 	/* ----- METHODS/CONSTRUCTORS ----- */
@@ -77,7 +72,7 @@ public class SpecificItemPage
 	 */
 	protected SpecificItemPage(Listing item)
 	{
-		lblTitle = new Label(item.name);
+		lblTitle = new Label(item.title);
 		lblDescription = new Label(item.description);
 		lblDescription.setWrapText(true);
 		lblDescription.setMaxSize(650, Integer.MAX_VALUE);
@@ -121,11 +116,10 @@ public class SpecificItemPage
 		
 		imgItem.setImage(img);
 		vbItemInfo.setAlignment(Pos.CENTER);
-		nav.setButtonStyleRound(btEmail);
 
 		vbSpecificItemPage.setAlignment(Pos.TOP_CENTER);
 		vbSpecificItemPage.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
-		vbSpecificItemPage.getChildren().addAll(nav.getNavBar(), lblTitle, imgItem, lblPrice, spDescription, lblItemCondition, lblSpecificInfo, btEmail);
+		vbSpecificItemPage.getChildren().addAll(nav.getNavBar(), lblTitle, imgItem, lblPrice, spDescription, lblItemCondition, lblSpecificInfo);
 		
 		MainPage.sqlm.getUser().getIsLoggedInProperty().addListener((observable) ->
 		{

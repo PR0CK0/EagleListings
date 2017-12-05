@@ -9,24 +9,26 @@
  */
 
 package p1;
-import java.io.File;
-
 import javafx.geometry.HPos;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -73,18 +75,13 @@ public class LoginPage
 	/** Button to create a new user account */
 	private Button btNewUser = new Button("New?");
 
+	// RIP login sound... :((((( does not like .jar files :(((((
 	/** Confirmatory login sound. */
-	private Media soundLogin = new Media(new File("p1/sound/login.wav").toURI().toString());
+	//private Media soundLogin = new Media(new File("p1/sound/login.wav").toURI().toString());
 	
 	/** Wrapper for login sound (JavaFX necessary). */
-	private MediaPlayer mpLogin = new MediaPlayer(soundLogin);
-	
-	/**
-	 * Needed to edit the user's selected image URI (otherwise cannot edit its value
-     * outside of the .setOnAction block in the new user method).<br>
-	 * Lambda expressions are quite annoying when editing an outside variable is necessary.
-	 */
-	private String imgPath;
+	//private MediaPlayer mpLogin = new MediaPlayer(soundLogin);
+
 	
 	/* -------------------------------- */
 	/* ----- METHODS/CONSTRUCTORS ----- */
@@ -128,7 +125,8 @@ public class LoginPage
 		
 		// Set VBox for use
 		vbLogin.getChildren().addAll(nav.getNavBar(), lblLogin, gpUserPass);
-		vbLogin.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
+		vbLogin.setBackground(new Background(new BackgroundFill[]{new BackgroundFill(Color.DARKGREY, null, null)}, 
+				new BackgroundImage[]{new BackgroundImage(new Image("p1/img/EmbryRiddleEagles.png"), BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, null)}));
 		vbLogin.setAlignment(Pos.TOP_CENTER);
 		
 		// Validate input text and limit length
@@ -140,6 +138,23 @@ public class LoginPage
 		// Button functionality
 		btLogin.setOnAction(e -> loginButtonClick());
 		btNewUser.setOnAction(e -> newUserButtonClick());
+		
+		// Enter key on login textfield
+		pfPassword.addEventFilter(KeyEvent.KEY_PRESSED, e ->
+		{
+			if(e.getCode() == KeyCode.ENTER)
+			{
+				btLogin.fire();
+			}
+		});
+		// Enter key on login textfield
+		tfEmail.addEventFilter(KeyEvent.KEY_PRESSED, e ->
+		{
+			if(e.getCode() == KeyCode.ENTER)
+			{
+				btLogin.fire();
+			}
+		});
 		
 		// Apply a listener to the navbar buttons
 		nav.navListener(false);
@@ -163,8 +178,15 @@ public class LoginPage
 		// Otherwise, we are logged in, so play the login sound and return to the main page
 		else
 		{
-			mpLogin.setVolume(.025);
-			mpLogin.play();
+			//mpLogin.setVolume(.025);
+			//mpLogin.play();
+			// Create a confirmation alert for contact information
+			Alert alertLogin = new Alert(AlertType.INFORMATION, "You have successfully logged in. Welcome, " + MainPage.sqlm.getUser().getName() + ".");
+			alertLogin.setTitle("Logged in!");
+			alertLogin.setHeaderText(null);
+			alertLogin.initModality(Modality.APPLICATION_MODAL);
+			alertLogin.showAndWait();
+			
 			MainPage.instance.getStage().getScene().setRoot(MainPage.instance.getMainVBox());
 		}
 	}
@@ -217,16 +239,12 @@ public class LoginPage
 		nav.setTextFieldStyle(tfPassword1);
 		nav.setTextFieldStyle(tfPassword2);
 
-		// Button for choosing a profile image
-		Button btChooseImg = new Button("Choose profile image");
-		nav.setButtonStyleRound(btChooseImg);
-
 		// Final button
 		Button btOk = new Button("OK");
 		nav.setButtonStyleRound(btOk);
 		
 		// Set VBox for use, set scene
-		vbNewUser.getChildren().addAll(lblTitle, lblWarning, tfName, tfEmail, tfPassword1, tfPassword2, btChooseImg, btOk);
+		vbNewUser.getChildren().addAll(lblTitle, lblWarning, tfName, tfEmail, tfPassword1, tfPassword2, btOk);
 		stageNewUser.setScene(sceneNewUser);
 		
 		// Text validation and limiting
@@ -239,39 +257,12 @@ public class LoginPage
 		TextValidation.tfLengthLimiter(tfPassword1, PASSWORD_CHARS_ALLOWED);
 		TextValidation.tfLengthLimiter(tfPassword2, PASSWORD_CHARS_ALLOWED);
 		
-		//TODO
-		// Sending it to Carson's server
-		// Image choosing button functionality
-		btChooseImg.setOnAction(e -> 
-		{
-			// Create a filechooser and allow the user to only select .png and .jpg files
-			FileChooser imgChooser = new FileChooser();
-			imgChooser.setTitle("Select your avatar");
-			imgChooser.getExtensionFilters().addAll(new ExtensionFilter("Image Files", "*.png", "*.jpg"));
-			File selectedFile = imgChooser.showOpenDialog(stageNewUser);
-			// If all is well with the file, set the path to its system URI
-			if (selectedFile != null) 
-			{
-				imgPath = selectedFile.toURI().toString();
-				System.out.println(imgPath);
-				System.out.println("Selected profile image successfully!");
-			}
-		});
-		
 		// OK button functionality
 		btOk.setOnAction(e ->  
 		{
 			// Bad entry strings
 			String emptyField = "One or more of the fields is empty!";
 			String badPasswords = "Passwords do not match!";
-			
-			// If the image path was not previously set, i.e. the user did not select a profile image,
-			// give it the default image's path 
-			// Needs prefix file:/
-			if (imgPath == null)
-			{
-				imgPath = "file:/p1/img/default_profile.png";
-			}
 			
 			// If any field is equal AND the passwords do not match, set the bad entry label's text
 			if ((tfName.getText().equals("") || tfEmail.getText().equals("") || tfPassword1.getText().equals("") || tfPassword2.getText().equals("")) 

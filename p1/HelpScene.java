@@ -56,25 +56,27 @@ public class HelpScene
 				+ "a student of Embry-Riddle Aeronautical University in Daytona beach, then kindly refrain from using this service.\n\n"
 				
 				+ "Login -\n  To login to your EagleListings profile, click the Login button near the top of the application window and "
-				+ "enter your appropriate email and password, making sure to capitalize where necessary. You can also create your account"
+				+ "enter your appropriate email and password, making sure to capitalize where necessary. You can also create your account "
 				+ "here.\n\n"
 				
 				+ "Profile -\n  To access your EagleListings profile, click the Profile button near the top of the application window and "
 				+ "view your profile. All of your statistics will be displayed.\n\n"
 				
 				+ "Buying -\n  To view items for sale, click the drop-down box near the top of the application, or enter a search term in "
-				+ "the search bar.\n\n"
+				+ "the search bar. While on a Buying page, you can sort items by price and select a specific item to view more closely. "
+				+ "From here, you can find the seller's contact information, if provided.\n\n"
 				
 				+ "Selling -\n  To list an item for sale, first create an account from the Login page and login to your account. Then "
 				+ "click the Selling button near the top of the application window to open the Selling page. While there, list your "
-				+ "item appropriately. When you list an item, other users will be able to see your username and contact you via email.\n\n"
+				+ "item appropriately. When you list an item, be sure to include some contact information so potential buyers can contact "
+				+ "you!\n\n"
 				
 				+ "DISCLAIMER -\n  EagleListings and its affiliates assume no liability for any events, detrimental or otherwise, that "
 				+ "occur once you, the user, performs an action while utilizing this service.");
 		
 		// Necessary to align the text to the stage... otherwise it aligns to its own max text width
 		//txtHelp.wrappingWidthProperty().bind(sceneHelp.widthProperty());
-		txtHelp.setWrappingWidth(320);
+		txtHelp.setWrappingWidth(315);
 		txtHelp.setTextAlignment(TextAlignment.JUSTIFY);
 		txtHelp.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.15em");
 		

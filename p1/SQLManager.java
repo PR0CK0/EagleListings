@@ -12,8 +12,6 @@ package p1;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 
 
 public class SQLManager 
@@ -27,10 +25,6 @@ public class SQLManager
 	
 	/** Creates a statement in order to speak with the database. */
 	private Statement statement = null;
-	
-	// TODO
-    // Use this guy instead?
-	// private PreparedStatement preparedstmt;
 	
 	/** Instance of User class, which adds functionality to the database connection. */
 	private User user;

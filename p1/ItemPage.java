@@ -9,6 +9,8 @@
 
 
 package p1;
+import java.util.Objects;
+
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -58,18 +60,21 @@ public class ItemPage
 	/** Drop-down box for sorting by post time. */
 	private ComboBox<String> cbPostTime = new ComboBox<>();
 	
-	// TODO
+	/** Observable array list of listing objects. */
 	private ObservableList<Listing> listingContentList = FXCollections.observableArrayList();
-	ListView<Listing> lvListings = new ListView<Listing>(listingContentList);
+	
+	/** Listview of listing objects to display. */
+	private ListView<Listing> lvListings = new ListView<Listing>(listingContentList);
+	
+	// TODO
+	// Optional
+	//private TableView<Listing> tvListings = new TableView<>(listingContentList);
 
 	
 	/* -------------------------------- */
 	/* ----- METHODS/CONSTRUCTORS ----- */
 	/* -------------------------------- */
-	
-	//TODO
-	// Make this page not-so-useless...
-	
+
 	/**
 	 * Default constructor for Item page - takes in a String of the Item type:
 	 * i.e. Books, Vehicles, Furniture or Rooms.
@@ -78,6 +83,17 @@ public class ItemPage
 	 */
 	protected ItemPage(String itemType)
 	{		
+		//TODO
+		// Optional
+		/*
+		TableColumn<Listing, String> listingTitleCol = new TableColumn<Listing, String>("Title");
+		TableColumn<Listing, String> listingPriceCol = new TableColumn<Listing, String>("Price");
+		TableColumn<Listing, String> listingConditionCol = new TableColumn<Listing, String>("Condition");
+		listingTitleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
+		
+		tvListings.getColumns().addAll(listingTitleCol, listingPriceCol, listingConditionCol);
+		*/
+		
 		// Set up the title label
 		lblItem.setText(itemType);
 		lblItem.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 3em; -fx-font-weight: bold");
@@ -86,8 +102,8 @@ public class ItemPage
 		lblSortBy.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em; -fx-font-weight: bold");
 		
 		// Combobox for sorting by price
-		cbSortBy.setValue("Most recent");
-		cbSortBy.getItems().addAll("Most recent", "Price: low to high", "Price: high to low");
+		cbSortBy.setValue("Default");
+		cbSortBy.getItems().addAll("Price: low to high", "Price: high to low");
 		nav.setComboBoxStyle(cbSortBy);
 		
 		// Set up the post time label
@@ -130,6 +146,11 @@ public class ItemPage
 			itemClick(new_val);
 		});
 		
+		// Sorting by price
+		cbSortBy.setOnAction(e -> sortByClick());
+		// TODO
+		// Other combobox not working yet
+		
 		// Add all nodes to the gridpane
 		gpItems.add(vbSort, 0, 0);
 		gpItems.add(lvListings, 1, 0);
@@ -142,6 +163,7 @@ public class ItemPage
 		vbItemPage.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
 		vbItemPage.setAlignment(Pos.TOP_CENTER);
 
+		
 		MainPage.sqlm.getUser().getIsLoggedInProperty().addListener((observable) ->
 		{
 			nav.setDisables(MainPage.sqlm.getUser().isLoggedIn(), true);
@@ -158,6 +180,28 @@ public class ItemPage
 	{
 		SpecificItemPage obj = new SpecificItemPage(clickedItem);
 		MainPage.instance.getStage().getScene().setRoot(obj.getRootPane());
+	}
+	
+	
+	/**
+	 * Functionality for combobox sorting by price.
+	 */
+	private void sortByClick()
+	{
+		String value = cbSortBy.getValue();
+		
+		if (Objects.equals(value, "Price: low to high"))
+		{
+			System.out.println("sort low to high");
+			FXCollections.sort(listingContentList);
+		}
+		
+		if (Objects.equals(value, "Price: high to low"))
+		{
+			System.out.println("sort high to low");
+			FXCollections.sort(listingContentList);
+			FXCollections.reverse(listingContentList);
+		}
 	}
 	
 	

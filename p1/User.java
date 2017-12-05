@@ -269,7 +269,6 @@ public class User
 				MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
 						+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', '"+vehicleYear+"', '"+vehicleMiles+"', '"+vehicleType+"', '"+vehicleBrand+"', null, null, "
 						+ "null, null, null, null)");
-				System.out.println("vehicles brah");
 			}
 			
 			if (Objects.equals(itemCategory, "furniture"))
@@ -285,12 +284,6 @@ public class User
 						+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', null, null, null, null, null, null, "
 						+ "null, "+roomBedNum+", "+roomBathNum+", '"+roomAddress+"')");
 			}
-			
-			/*
-			MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
-					+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', '"+vehicleYear+"', '"+vehicleMiles+"', '"+vehicleType+"', '"+vehicleBrand+"', '"+coursePrefix+"', '"+furnitureCategory+"', "
-					+ "'"+furnitureRoomCategory+"', "+roomBedNum+", "+roomBathNum+", '"+roomAddress+"')");
-			 */
 			
 			// Increment items sold in the database
 			int newItemsSold = itemsSold + 1;
@@ -322,9 +315,16 @@ public class User
 		{
 			// Execute a query, grabbing all listings where the title is similar to the user's entered search term
 			set = MainPage.sqlm.getStatement().executeQuery("SELECT * FROM listings WHERE name LIKE '%"+userSearch+"%'");
+			//ResultSet set2 = MainPage.sqlm.getStatement().executeQuery("SELECT email FROM users WHERE id = ("+set.getString("sellerid")+")");
 			
+			// TODO
+			//while (set.next() && set2.next())
 			while (set.next())
 			{
+				// TODO
+				//String email = set2.getString("email");
+				//int sellerid = set.getInt("sellerid");
+				
 				String specificInfo = "";
 				
 				if (set.getString("category").equals("books"))
@@ -345,11 +345,11 @@ public class User
 				
 				if (set.getString("category").equals("rooms"))
 				{
-					specificInfo = "Bedroom number: " + set.getString("roombednum") + "\n" + "Bathroom number: " + set.getString("roombathnum") 
+					specificInfo = "Number of bedrooms: " + set.getString("roombednum") + "\n" + "Number of bathrooms: " + set.getString("roombathnum") 
 						+ "\n" + "Room address: " + set.getString("roomaddress");
 				}
 				
-				searchResults.add(new Listing(set.getString("sellerid"), set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
+				searchResults.add(new Listing(set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
 			}
 		} 
 		
@@ -402,7 +402,7 @@ public class User
 						+ "\n" + "Room address: " + set.getString("roomaddress");
 				}
 				
-				itemResults.add(new Listing(set.getString("sellerid"), set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
+				itemResults.add(new Listing(set.getString("name"), set.getString("description"), set.getString("category"), set.getString("listingcondition"), set.getString("price"), specificInfo));
 			}
 		} 
 		

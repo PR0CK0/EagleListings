@@ -11,58 +11,21 @@
 
 package p1;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
-public class Listing 
+public class Listing implements Comparable<Object>
 {
-	public String sellerID;
-	public String sellerEmail;
-	private ResultSet set;
-	
-	public String name;
+	public String title;
 	public String description;
 	public String category;
 	public String condition;
 	public String price;
 	
 	public String specificInfo;
-	
-	/*
-	public String bookPrefix;
-	
-    public String vehicleYear;
-    public String vehicleMiles;
-    public String vehicleBrand;
-    public String vehicleType;
+
     
-    public String furnitureCategory;
-    public String furnitureRoomCategory;
-    
-    public String roomBathroomNumber;
-    public String roomBedroomNumber;
-    public String roomAddress;
-    */
-    
-    public Listing(String sellerID, String name, String description, String category, String condition, String price, String specificInfo)
+    public Listing(String title, String description, String category, String condition, String price, String specificInfo)
     {
-    	// 				set2 = MainPage.sqlm.getStatement().executeQuery("SELECT email FROM users WHERE listings.sellerid = users.id");
-    	//	            String sellerEmail = set2.getString("id");	
-    	this.sellerID = sellerID;
-    	/*
-    	try 
-    	{
-			set = MainPage.sqlm.getStatement().executeQuery("SELECT email FROM users WHERE id = '"+sellerID+"'");
-			sellerEmail = set.getString("email");
-		} 
-    	
-    	catch (SQLException e) 
-    	{
-			e.printStackTrace();
-		}
-		*/
-    	
-    	this.name = name;
+    	this.title = title;
     	this.description = description;
     	this.category = category;
     	this.condition = condition;
@@ -78,6 +41,45 @@ public class Listing
     @Override
     public String toString()
     {
-    	return name + " - $" + price + " - " + condition;
+    	return title + " - $" + price + " - " + condition;
+    }
+    
+    
+    /**
+     * Allows for Listing items to be sorted by price.
+     */
+    @Override
+    public int compareTo(Object o) 
+    {
+    	if (o == null)
+    	{
+    		return 0;
+    	}
+    	
+    	else if (o instanceof Listing)
+    	{
+    		Listing other = (Listing)o;
+    		int myPrice = Integer.parseInt(price);
+    		int otherPrice = Integer.parseInt(other.price);
+    		if (myPrice == otherPrice)
+    		{
+    			return 0;
+    		}
+    		
+    		else if (myPrice > otherPrice)
+    		{
+    			return 1;
+    		}
+    		
+    		else 
+    		{
+    			return -1;
+    		}
+    	}
+    	
+    	else
+    	{
+    		return 0;
+    	}
     }
 }

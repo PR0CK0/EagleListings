@@ -5,10 +5,6 @@
  */
 package p1;
 
-import java.sql.SQLException;
-
-import javafx.scene.control.TextField;
-
 /*
 public static void tfTextValidator(TextField tf)
 {
@@ -222,3 +218,51 @@ private void gameLoop()
 		return searchResults;
 	}
 */
+
+/*
+	private void setUpGridPanes()
+	{	
+		// Set up the gridpanes
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 0, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 1, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 2, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 3, 0);
+		gpBooks.add(new ImageView(new Image("p1/img/books.png", 100, 100, true, true)), 4, 0);
+		gpBooks.setHgap(10);
+		gpBooks.setPadding(new Insets(10, 0, 10, 0));
+		gpBooks.setAlignment(Pos.CENTER);
+		
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 0, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 1, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 2, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 3, 0);
+		gpVehicles.add(new ImageView(new Image("p1/img/vehicles.png", 100, 100, true, true)), 4, 0);
+		gpVehicles.setHgap(10);
+		gpVehicles.setPadding(new Insets(10, 0, 10, 0));
+		gpVehicles.setAlignment(Pos.CENTER);
+		
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 0, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 1, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 2, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 3, 0);
+		gpFurniture.add(new ImageView(new Image("p1/img/furniture.png", 100, 100, true, true)), 4, 0);
+		gpFurniture.setHgap(10);
+		gpFurniture.setPadding(new Insets(10, 0, 10, 0));
+		gpFurniture.setAlignment(Pos.CENTER);
+		
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 0, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 1, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 2, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 3, 0);
+		gpRooms.add(new ImageView(new Image("p1/img/rooms.png", 100, 100, true, true)), 4, 0);
+		gpRooms.setHgap(10);
+		gpRooms.setPadding(new Insets(10, 0, 10, 0));
+		gpRooms.setAlignment(Pos.CENTER);
+	}
+ */
+
+/*
+MainPage.sqlm.getStatement().executeUpdate("INSERT INTO listings (id, sellerid, name, category, description, listingcondition, price, vehicleyear, vehiclemiles, vehicletype, vehiclebrand, bookprefix, furncategory, furnroomcategory, roombednum, roombathnum, roomaddress) "
+		+ "VALUES ("+maxid+", "+loggedInID+", '"+name+"', '"+itemCategory+"', '"+description+"', '"+productCondition+"', '"+price+"', '"+vehicleYear+"', '"+vehicleMiles+"', '"+vehicleType+"', '"+vehicleBrand+"', '"+coursePrefix+"', '"+furnitureCategory+"', "
+		+ "'"+furnitureRoomCategory+"', "+roomBedNum+", "+roomBathNum+", '"+roomAddress+"')");
+ */

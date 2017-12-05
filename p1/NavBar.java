@@ -29,6 +29,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
@@ -43,7 +45,7 @@ public class NavBar
 	/* ---------------------- */
 	
 	/** Overall container node for the entire NavBar. */
-	private VBox vbNav = new VBox(15);
+	private VBox vbNav = new VBox(17);
 	
 	/** HBox to contain navigation buttons. */
 	private HBox hbNav = new HBox(25);
@@ -108,6 +110,14 @@ public class NavBar
 		tfSearchBar.setMinWidth(250);
 		tfSearchBar.setPromptText("What are you looking for...");
 		tfSearchBar.setEffect(dropShadowButton);
+		// Enter key on search bar
+		tfSearchBar.addEventFilter(KeyEvent.KEY_PRESSED, e ->
+		{
+			if(e.getCode() == KeyCode.ENTER)
+			{
+				btSearch.fire();
+			}
+		});
 		
 		// Hbox containing all buttons
 		hbNav.setAlignment(Pos.CENTER);

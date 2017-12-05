@@ -76,20 +76,14 @@ public class ProfilePage
 		lblUsername.setText("Welcome, " + MainPage.sqlm.getUser().getName() + ".");
 		
 		// Display basic user info
-		lblInfo.setText("Email: " + MainPage.sqlm.getUser().getLoggedInEmail() + " \nPassword: " + MainPage.sqlm.getUser().getLoggedInPassword()
-				+ "\nItems sold: " + MainPage.sqlm.getUser().getItemsSold()); 
+		lblInfo.setText("Email: " + MainPage.sqlm.getUser().getLoggedInEmail() + "\nPassword: " + MainPage.sqlm.getUser().getLoggedInPassword()
+				+ "\nItems listed: " + MainPage.sqlm.getUser().getItemsSold()); 
 		lblInfo.setStyle("-fx-font-family: \"Arial\"; -fx-font-size: 1.2em; -fx-font-weight: bold");
 		
-		//TODO
-		// Grab the user's profile image URI from the User class and set an ImageView object to contain this Image
-		//String imgURI = MainPage.sqlm.getUser().getPictureURI().toString();
-		
-		// For now I've just set it to a default one until retrieval from Carson's server can be handled
+		// Set profile image to default
 		String imgURI = "p1/img/default_profile.png";
-		//String imgURI = "http://eaglelistings.epizy.com/img/avatars/default.png";
       	img = new Image(imgURI);
 		imgProfile.setImage(img);
-		//imgProfile = new ImageView(new Image("http://eaglelistings.epizy.com/img/avatars/default.png?i=1"));
 		
 		// Set button's style
 		nav.setButtonStyleSharp(btChangeEmail);
@@ -105,7 +99,7 @@ public class ProfilePage
 		vbProfile.setMaxSize(1000, 1000);
 		vbProfile.setBackground(new Background(new BackgroundFill(Color.DARKGREY, null, null)));
 		vbProfile.setMinSize(MainPage.STAGE_WIDTH, MainPage.STAGE_HEIGHT);
-		vbProfile.getChildren().addAll(nav.getNavBar(), lblUsername, lblInfo, imgProfile, new Label("Should be here"), hbChange);
+		vbProfile.getChildren().addAll(nav.getNavBar(), lblUsername, lblInfo, imgProfile, hbChange);
 		
 		// Button functionality
 		btChangeEmail.setOnAction(e -> changeEmailButtonClick());
@@ -205,6 +199,7 @@ public class ProfilePage
 				{
 					lblWarning.setText("Current email does not match!");
 				}
+				
 				// All good? Change email
 				else
 				{
@@ -236,7 +231,7 @@ public class ProfilePage
 				
 				else if (!Objects.equals(tf1.getText(), MainPage.sqlm.getUser().getLoggedInEmail()))
 				{
-					lblWarning.setText("Current email does not match!");
+					lblWarning.setText("Current password does not match!");
 				}
 				
 				// All good? Change password
